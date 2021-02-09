@@ -1,4 +1,4 @@
-import Layout from '../components/Layout'
+import Layout from "../components/Layout";
 
 const Home = () => (
   <Layout>
@@ -7,14 +7,14 @@ const Home = () => (
         src="/GitHub-Mark-32px.png"
         width="32"
         height="32"
-        style={{ marginRight: '.3em', verticalAlign: 'middle' }}
+        style={{ marginRight: ".3em", verticalAlign: "middle" }}
       />
       <a href="https://github.com/vvo/next-iron-session">next-iron-session</a> -
       Authentication example
     </h1>
 
     <p>
-      This example creates an authentication system that uses a{' '}
+      This example creates an authentication system that uses a{" "}
       <b>signed and encrypted cookie to store session data</b>.
     </p>
 
@@ -56,6 +56,6 @@ const Home = () => (
       }
     `}</style>
   </Layout>
-)
+);
 
-export default Home
+export default Home;

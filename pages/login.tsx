@@ -1,8 +1,8 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import useUser from "../lib/useUser";
 import Layout from "../components/Layout";
-import Form from "../components/Form";
 import fetchJson from "../lib/fetchJson";
+import { Button, TextField } from "@material-ui/core";
 
 const Login = () => {
   const { mutateUser } = useUser({
@@ -11,12 +11,13 @@ const Login = () => {
   });
 
   const [errorMsg, setErrorMsg] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-
+  const handleLogin = async () => {
     const body = {
-      username: e.currentTarget.username.value,
+      email,
+      password,
     };
 
     try {
@@ -31,20 +32,32 @@ const Login = () => {
       console.error("An unexpected error happened:", error);
       setErrorMsg(error.data.message);
     }
-  }
+  };
 
   return (
     <Layout>
       <div className="login">
-        <Form isLogin errorMessage={errorMsg} onSubmit={handleSubmit} />
+        <TextField
+          label="Email"
+          variant="outlined"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <TextField
+          label="Password"
+          variant="outlined"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+
+        <Button variant="contained" color="primary" onClick={handleLogin}>
+          Login
+        </Button>
+
+        {errorMsg !== "" && <p>{errorMsg}</p>}
       </div>
       <style jsx>{`
         .login {
-          max-width: 21rem;
-          margin: 0 auto;
-          padding: 1rem;
-          border: 1px solid #ccc;
-          border-radius: 4px;
         }
       `}</style>
     </Layout>
