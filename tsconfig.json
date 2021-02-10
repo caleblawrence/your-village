@@ -22,7 +22,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "lib/fetchJson.js", "lib/fetchJson.js"  ],
   "exclude": [
     "node_modules"
   ]

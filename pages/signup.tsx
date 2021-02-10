@@ -3,40 +3,46 @@ import useUser from "../lib/useUser";
 import Layout from "../components/Layout";
 import fetchJson from "../lib/fetchJson";
 import { Button, TextField } from "@material-ui/core";
+import axios from "axios";
 
-const Login = () => {
+const Signup = () => {
   const { mutateUser } = useUser({
     redirectTo: "/profile",
     redirectIfFound: true,
   });
-
   const [errorMsg, setErrorMsg] = useState("");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = async () => {
+  const handleSignup = async () => {
     const body = {
+      name,
       email,
       password,
     };
 
     try {
-      let data = await fetchJson("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-
-      await mutateUser(data);
+      let response = await axios.post("/api/signup", body);
+      console.log("response", response.data);
+      await mutateUser(response.data);
     } catch (error) {
-      console.error("An unexpected error happened:", error);
-      setErrorMsg(error.data.message);
+      console.error("An unexpected error happened:", error.response);
+      setErrorMsg(error.response.data.message);
     }
   };
 
   return (
     <Layout>
-      <div className="login">
+      <div className="signup">
+        <TextField
+          label="Full name"
+          variant="outlined"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          fullWidth
+          style={{ marginBottom: 20 }}
+        />
         <TextField
           label="Email"
           variant="outlined"
@@ -56,11 +62,11 @@ const Login = () => {
         <Button
           variant="contained"
           color="primary"
-          onClick={handleLogin}
+          onClick={handleSignup}
           size="large"
           style={{ marginTop: 10, display: "block" }}
         >
-          Login
+          Sign Up
         </Button>
 
         {errorMsg !== "" && <p>{errorMsg}</p>}
@@ -73,4 +79,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signup;

@@ -51,11 +51,8 @@ const Header = () => {
         )}
         {user?.isLoggedIn && (
           <>
-            <Button color="inherit" href="/profile-sg">
-              Profile (SG)
-            </Button>
-            <Button color="inherit" href="/profile-ssr">
-              Profile (SSR)
+            <Button color="inherit" href="/profile">
+              Profile
             </Button>
             <Button
               color="inherit"

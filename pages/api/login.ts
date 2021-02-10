@@ -33,6 +33,8 @@ export default withSession(async (req: any, res: NextApiResponse) => {
     const token = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET, {
       expiresIn: 3000, //50 minutes
     });
+    // this removes the password hash from the object so that it's not sent to the client
+    delete user.password;
     req.session.set("user", user);
     await req.session.save();
     return res.status(200).json({ token });
