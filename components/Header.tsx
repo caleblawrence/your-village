@@ -1,100 +1,78 @@
-import React from 'react'
-import Link from 'next/link'
-import useUser from '../lib/useUser'
-import { useRouter } from 'next/router'
-import fetchJson from '../lib/fetchJson'
+import React from "react";
+import Link from "next/link";
+import useUser from "../lib/useUser";
+import { useRouter } from "next/router";
+import fetchJson from "../lib/fetchJson";
+import {
+  AppBar,
+  Toolbar,
+  IconButton,
+  Typography,
+  Button,
+  makeStyles,
+} from "@material-ui/core";
+import MenuIcon from "@material-ui/icons/Menu";
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    flexGrow: 1,
+  },
+  menuButton: {
+    marginRight: theme.spacing(2),
+  },
+  title: {
+    flexGrow: 1,
+  },
+}));
 
 const Header = () => {
-  const { user, mutateUser } = useUser()
-  const router = useRouter()
+  const { user, mutateUser } = useUser();
+  const router = useRouter();
+  const classes = useStyles();
+
   return (
-    <header>
-      <nav>
-        <ul>
-          <li>
-            <Link href="/">
-              <a>Home</a>
-            </Link>
-          </li>
-          {!user?.isLoggedIn && (
-            <li>
-              <Link href="/login">
-                <a>Login</a>
-              </Link>
-            </li>
-          )}
-          {user?.isLoggedIn && (
-            <>
-              <li>
-                <Link href="/profile-sg">
-                  <a>
-                    <img src={user.avatarUrl} width={20} height={20} /> Profile
-                    (Static Generation, recommended)
-                  </a>
-                </Link>
-              </li>
-              <li>
-                <Link href="/profile-ssr">
-                  <a>Profile (Server-side Rendering)</a>
-                </Link>
-              </li>
-              <li>
-                <a
-                  href="/api/logout"
-                  onClick={async (e) => {
-                    e.preventDefault()
-                    await mutateUser(fetchJson('/api/logout'))
-                    router.push('/login')
-                  }}
-                >
-                  Logout
-                </a>
-              </li>
-            </>
-          )}
-          <li>
-            <a href="https://github.com/vvo/next-iron-session">
-              <img src="/GitHub-Mark-Light-32px.png" width="32" height="32" />
-            </a>
-          </li>
-        </ul>
-      </nav>
-      <style jsx>{`
-        ul {
-          display: flex;
-          list-style: none;
-          margin-left: 0;
-          padding-left: 0;
-        }
+    <AppBar position="static">
+      <Toolbar>
+        <IconButton
+          edge="start"
+          className={classes.menuButton}
+          color="inherit"
+          aria-label="menu"
+        >
+          <MenuIcon />
+        </IconButton>
+        <Typography variant="h6" className={classes.title}>
+          BabySitting App
+        </Typography>
+        {!user?.isLoggedIn && (
+          <Button color="inherit" href="/login">
+            Login
+          </Button>
+        )}
+        {user?.isLoggedIn && (
+          <>
+            <Button color="inherit" href="/profile-sg">
+              Profile (SG)
+            </Button>
+            <Button color="inherit" href="/profile-ssr">
+              Profile (SSR)
+            </Button>
+            <Button
+              color="inherit"
+              href="/api/logout"
+              onClick={async (e) => {
+                e.preventDefault();
+                await mutateUser(fetchJson("/api/logout"));
+                router.push("/login");
+              }}
+            >
+              Logout
+            </Button>
+          </>
+        )}
+      </Toolbar>
+    </AppBar>
+  );
+};
 
-        li {
-          margin-right: 1rem;
-          display: flex;
-        }
-
-        li:first-child {
-          margin-left: auto;
-        }
-
-        a {
-          color: #fff;
-          text-decoration: none;
-          display: flex;
-          align-items: center;
-        }
-
-        a img {
-          margin-right: 1em;
-        }
-
-        header {
-          padding: 0.2rem;
-          color: #fff;
-          background-color: #333;
-        }
-      `}</style>
-    </header>
-  )
-}
-
-export default Header
+export default Header;

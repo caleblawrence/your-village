@@ -42,15 +42,24 @@ const Login = () => {
           variant="outlined"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          fullWidth
+          style={{ marginBottom: 20 }}
         />
         <TextField
           label="Password"
           variant="outlined"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          fullWidth
         />
 
-        <Button variant="contained" color="primary" onClick={handleLogin}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleLogin}
+          size="large"
+          style={{ marginTop: 10, display: "block" }}
+        >
           Login
         </Button>
 

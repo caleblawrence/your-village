@@ -1,12 +1,11 @@
-import React from 'react'
-import Head from 'next/head'
-import Header from './Header'
-import PropTypes from 'prop-types'
+import React from "react";
+import Head from "next/head";
+import Header from "./Header";
 
 const Layout = ({ children }) => (
   <>
     <Head>
-      <title>With Iron Session</title>
+      <title>Babysitter App</title>
     </Head>
     <style jsx global>{`
       *,
@@ -18,9 +17,9 @@ const Layout = ({ children }) => (
       body {
         margin: 0;
         color: #333;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-          'Helvetica Neue', Arial, Noto Sans, sans-serif, 'Apple Color Emoji',
-          'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, Noto Sans, sans-serif, "Apple Color Emoji",
+          "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
       }
 
       .container {
@@ -36,10 +35,6 @@ const Layout = ({ children }) => (
       <div className="container">{children}</div>
     </main>
   </>
-)
+);
 
-export default Layout
-
-Layout.propTypes = {
-  children: PropTypes.node,
-}
+export default Layout;
