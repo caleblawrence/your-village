@@ -17,7 +17,6 @@ model User {
   password    String
   UserFriends UserFriend[] @relation("user")
   Friends     UserFriend[] @relation("friend")
-
 }
 
 model UserFriend {

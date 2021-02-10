@@ -1,7 +1,8 @@
 import withSession from "../../lib/session";
+import { User } from "@prisma/client";
 
 export default withSession(async (req, res) => {
-  const user = req.session.get("user");
+  const user: User = req.session.get("user");
 
   if (user) {
     // in a real world application you might read the user id from the session and then do a database request

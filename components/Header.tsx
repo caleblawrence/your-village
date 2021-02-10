@@ -45,9 +45,14 @@ const Header = () => {
           BabySitting App
         </Typography>
         {!user?.isLoggedIn && (
-          <Button color="inherit" href="/login">
-            Login
-          </Button>
+          <>
+            <Button color="inherit" href="/login">
+              Login
+            </Button>
+            <Button color="inherit" href="/signup">
+              Signup
+            </Button>
+          </>
         )}
         {user?.isLoggedIn && (
           <>

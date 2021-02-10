@@ -57,6 +57,8 @@ const Signup = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           fullWidth
+          type="password"
+          autoComplete="current-password"
         />
 
         <Button
