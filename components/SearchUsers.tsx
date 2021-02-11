@@ -1,26 +1,14 @@
-import React from "react";
+import React, { useEffect, useMemo, useState, useCallback } from "react";
 import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import LocationOnIcon from "@material-ui/icons/LocationOn";
+import PersonIcon from "@material-ui/icons/Person";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import parse from "autosuggest-highlight/parse";
-import throttle from "lodash/throttle";
-
-function loadScript(src: string, position: HTMLElement | null, id: string) {
-  if (!position) {
-    return;
-  }
-
-  const script = document.createElement("script");
-  script.setAttribute("async", "");
-  script.setAttribute("id", id);
-  script.src = src;
-  position.appendChild(script);
-}
-
-const autocompleteService = { current: null };
+import { User } from "@prisma/client";
+import axios from "axios";
+import useDebounce from "./useDebounce";
 
 const useStyles = makeStyles((theme) => ({
   icon: {
@@ -29,98 +17,47 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-interface PlaceType {
-  description: string;
-  structured_formatting: {
-    main_text: string;
-    secondary_text: string;
-    main_text_matched_substrings: [
-      {
-        offset: number;
-        length: number;
-      }
-    ];
-  };
-}
-
-export default function GoogleMaps() {
+function SearchUsers() {
   const classes = useStyles();
-  const [value, setValue] = React.useState<PlaceType | null>(null);
-  const [inputValue, setInputValue] = React.useState("");
-  const [options, setOptions] = React.useState<PlaceType[]>([]);
-  const loaded = React.useRef(false);
+  const [value, setValue] = useState<User | null>(null);
+  const [inputValue, setInputValue] = useState("");
+  const [options, setOptions] = useState<User[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
 
-  if (typeof window !== "undefined" && !loaded.current) {
-    if (!document.querySelector("#google-maps")) {
-      loadScript(
-        "https://maps.googleapis.com/maps/api/js?key=AIzaSyBwRp1e12ec1vOTtGiA4fcCt2sCUS78UYc&libraries=places",
-        document.querySelector("head"),
-        "google-maps"
-      );
-    }
+  const debouncedSearchTerm = useDebounce(inputValue, 1000);
 
-    loaded.current = true;
-  }
+  useEffect(
+    () => {
+      if (debouncedSearchTerm) {
+        setIsSearching(true);
+        axios
+          .get(`/api/search-users?name=${debouncedSearchTerm}`)
+          .then(function (response) {
+            setIsSearching(false);
 
-  const fetch = React.useMemo(
-    () =>
-      throttle(
-        (
-          request: { input: string },
-          callback: (results?: PlaceType[]) => void
-        ) => {
-          (autocompleteService.current as any).getPlacePredictions(
-            request,
-            callback
-          );
-        },
-        200
-      ),
-    []
-  );
-
-  React.useEffect(() => {
-    let active = true;
-
-    if (!autocompleteService.current && (window as any).google) {
-      autocompleteService.current = new (window as any).google.maps.places.AutocompleteService();
-    }
-    if (!autocompleteService.current) {
-      return undefined;
-    }
-
-    if (inputValue === "") {
-      setOptions(value ? [value] : []);
-      return undefined;
-    }
-
-    fetch({ input: inputValue }, (results?: PlaceType[]) => {
-      if (active) {
-        let newOptions = [] as PlaceType[];
-
-        if (value) {
-          newOptions = [value];
-        }
-
-        if (results) {
-          newOptions = [...newOptions, ...results];
-        }
-
-        setOptions(newOptions);
+            console.log("user", response?.data?.users);
+            if (response?.data?.users == undefined) {
+              setOptions([]);
+            } else {
+              setOptions(response.data.users);
+            }
+          });
+      } else {
+        setOptions([]);
       }
-    });
-
-    return () => {
-      active = false;
-    };
-  }, [value, inputValue, fetch]);
+    },
+    // This is the useEffect input array
+    // Our useEffect function will only execute if this value changes ...
+    // ... and thanks to our hook it will only change if the original ...
+    // value (searchTerm) hasn't changed for more than 500ms.
+    [debouncedSearchTerm]
+  );
 
   return (
     <Autocomplete
-      id="google-map-demo"
       style={{ width: 300 }}
       getOptionLabel={(option) =>
-        typeof option === "string" ? option : option.description
+        typeof option === "string" ? option : option.name
       }
       filterOptions={(x) => x}
       options={options}
@@ -128,7 +65,7 @@ export default function GoogleMaps() {
       includeInputInList
       filterSelectedOptions
       value={value}
-      onChange={(event: any, newValue: PlaceType | null) => {
+      onChange={(event: any, newValue: User | null) => {
         setOptions(newValue ? [newValue, ...options] : options);
         setValue(newValue);
       }}
@@ -136,40 +73,17 @@ export default function GoogleMaps() {
         setInputValue(newInputValue);
       }}
       renderInput={(params) => (
-        <TextField
-          {...params}
-          label="Add a location"
-          variant="outlined"
-          fullWidth
-        />
+        <TextField {...params} label="Name" variant="outlined" fullWidth />
       )}
       renderOption={(option) => {
-        const matches =
-          option.structured_formatting.main_text_matched_substrings;
-        const parts = parse(
-          option.structured_formatting.main_text,
-          matches.map((match: any) => [
-            match.offset,
-            match.offset + match.length,
-          ])
-        );
-
         return (
           <Grid container alignItems="center">
             <Grid item>
-              <LocationOnIcon className={classes.icon} />
+              <PersonIcon className={classes.icon} />
             </Grid>
             <Grid item xs>
-              {parts.map((part, index) => (
-                <span
-                  key={index}
-                  style={{ fontWeight: part.highlight ? 700 : 400 }}
-                >
-                  {part.text}
-                </span>
-              ))}
               <Typography variant="body2" color="textSecondary">
-                {option.structured_formatting.secondary_text}
+                {option.name}
               </Typography>
             </Grid>
           </Grid>
@@ -178,3 +92,5 @@ export default function GoogleMaps() {
     />
   );
 }
+
+export default SearchUsers;
