@@ -1,11 +1,10 @@
-import React, { useEffect, useMemo, useState, useCallback } from "react";
+import React, { useEffect, SetStateAction, useState, Dispatch } from "react";
 import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import PersonIcon from "@material-ui/icons/Person";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
-import parse from "autosuggest-highlight/parse";
 import { User } from "@prisma/client";
 import axios from "axios";
 import useDebounce from "./useDebounce";
@@ -17,41 +16,37 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function SearchUsers() {
+interface Props {
+  setFriendToAdd: Dispatch<SetStateAction<User>>;
+  inputValue: string;
+  setInputValue: Dispatch<SetStateAction<string>>;
+}
+
+function SearchUsers(props: Props) {
+  const { setFriendToAdd, inputValue, setInputValue } = props;
   const classes = useStyles();
-  const [value, setValue] = useState<User | null>(null);
-  const [inputValue, setInputValue] = useState("");
   const [options, setOptions] = useState<User[]>([]);
   const [isSearching, setIsSearching] = useState(false);
 
   const debouncedSearchTerm = useDebounce(inputValue, 1000);
 
-  useEffect(
-    () => {
-      if (debouncedSearchTerm) {
-        setIsSearching(true);
-        axios
-          .get(`/api/search-users?name=${debouncedSearchTerm}`)
-          .then(function (response) {
-            setIsSearching(false);
-
-            console.log("user", response?.data?.users);
-            if (response?.data?.users == undefined) {
-              setOptions([]);
-            } else {
-              setOptions(response.data.users);
-            }
-          });
-      } else {
-        setOptions([]);
-      }
-    },
-    // This is the useEffect input array
-    // Our useEffect function will only execute if this value changes ...
-    // ... and thanks to our hook it will only change if the original ...
-    // value (searchTerm) hasn't changed for more than 500ms.
-    [debouncedSearchTerm]
-  );
+  useEffect(() => {
+    if (debouncedSearchTerm) {
+      setIsSearching(true);
+      axios
+        .get(`/api/search-users?name=${debouncedSearchTerm}`)
+        .then(function (response) {
+          setIsSearching(false);
+          if (response?.data?.users === []) {
+            setOptions([]);
+          } else {
+            setOptions(response.data.users);
+          }
+        });
+    } else {
+      setOptions([]);
+    }
+  }, [debouncedSearchTerm]);
 
   return (
     <Autocomplete
@@ -64,10 +59,11 @@ function SearchUsers() {
       autoComplete
       includeInputInList
       filterSelectedOptions
-      value={value}
+      inputValue={inputValue}
       onChange={(event: any, newValue: User | null) => {
-        setOptions(newValue ? [newValue, ...options] : options);
-        setValue(newValue);
+        setOptions([]);
+        setFriendToAdd(newValue);
+        setInputValue("");
       }}
       onInputChange={(event, newInputValue) => {
         setInputValue(newInputValue);
