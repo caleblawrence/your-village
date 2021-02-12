@@ -56,6 +56,9 @@ const Header = () => {
         )}
         {user?.isLoggedIn && (
           <>
+            <Button color="inherit" href="/friends">
+              Friends
+            </Button>
             <Button color="inherit" href="/profile">
               Profile
             </Button>
