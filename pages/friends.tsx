@@ -3,14 +3,27 @@ import Layout from "../components/Layout";
 import { IUser } from "../types/IUser";
 import SearchUsers from "../components/SearchUsers";
 import { User } from "@prisma/client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Paper, Button } from "@material-ui/core";
+import axios from "axios";
 
 const Friends = () => {
   let data = useUser({ redirectTo: "/login" });
   let user: IUser = data.user;
   const [friendToAdd, setFriendToAdd] = useState<User | null>(null);
   const [inputValue, setInputValue] = useState("");
+  const [myFriends, setMyFriends] = useState<IUser[]>([]);
+
+  useEffect(() => {
+    if (user == null) return;
+    async function getMyFriends() {
+      const myFriendsResponse = await axios.get(
+        `/api/my-friends?userId=${user.id}`
+      );
+      setMyFriends(myFriendsResponse.data);
+    }
+    getMyFriends();
+  }, [user]);
 
   const handleNo = () => {
     setFriendToAdd(null);
@@ -29,12 +42,14 @@ const Friends = () => {
   return (
     <Layout>
       <h1>Friends</h1>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Non, aperiam
-        laborum repellendus distinctio, est pariatur voluptas consequuntur
-        libero illum similique dolore tempora sit, eligendi amet facilis enim
-        vero obcaecati rerum.
-      </p>
+      {myFriends.map((friend) => {
+        return (
+          <div>
+            <p>{friend.name}</p>
+            <p>{friend.email}</p>
+          </div>
+        );
+      })}
       <h3>Add friends</h3>
       {friendToAdd && (
         <Paper
