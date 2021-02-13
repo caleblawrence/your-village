@@ -3,7 +3,6 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../lib/prisma";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method !== "POST") return;
   try {
     assert.notEqual(null, req.body.sentByUserId, "sentByUserId required");
     assert.notEqual(null, req.body.requestedUserId, "requestedUserId required");

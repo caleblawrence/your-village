@@ -13,7 +13,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const name = req.query.name as string;
 
   let matchedUsers = await prisma.user.findMany({
-    where: { name: { contains: name.trim() } },
+    where: { name: { contains: name.trim(), mode: "insensitive" } },
   });
   res.status(200).json({ users: matchedUsers });
 };

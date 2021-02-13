@@ -25,5 +25,23 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   });
 
   let friends = rawFriendData.map((row) => row.friend);
-  res.status(200).json(friends);
+
+  let rawFriendRequestData = await prisma.userFriendRequests.findMany({
+    where: {
+      requestedUserId: +userId,
+    },
+    select: {
+      sentByUser: {
+        select: {
+          id: true,
+          email: true,
+          name: true,
+        },
+      },
+    },
+  });
+
+  let friendRequests = rawFriendRequestData.map((row) => row.sentByUser);
+
+  res.status(200).json({ friends: friends, friendRequests: friendRequests });
 };
