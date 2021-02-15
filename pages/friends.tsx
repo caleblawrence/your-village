@@ -6,6 +6,7 @@ import { User } from "@prisma/client";
 import { useEffect, useState } from "react";
 import { Paper, Button } from "@material-ui/core";
 import axios from "axios";
+import Skeleton from "@material-ui/lab/Skeleton";
 
 const Friends = () => {
   let data = useUser({ redirectTo: "/login" });
@@ -14,16 +15,23 @@ const Friends = () => {
   const [inputValue, setInputValue] = useState("");
   const [myFriends, setMyFriends] = useState<IUser[]>([]);
   const [friendRequests, setFriendRequests] = useState<IUser[]>([]);
+  const [isAddingFriend, setIsAddingFriend] = useState(false);
+  const [isLoadingFriends, setIsLoadingFriends] = useState(false);
+
+  async function getMyFriends() {
+    setIsLoadingFriends(true);
+
+    // TODO: need leading indicator for this too
+    const myFriendsResponse = await axios.get(
+      `/api/my-friends?userId=${user.id}`
+    );
+    setMyFriends(myFriendsResponse.data.friends);
+    setFriendRequests(myFriendsResponse.data.friendRequests);
+    setIsLoadingFriends(false);
+  }
 
   useEffect(() => {
     if (user == null) return;
-    async function getMyFriends() {
-      const myFriendsResponse = await axios.get(
-        `/api/my-friends?userId=${user.id}`
-      );
-      setMyFriends(myFriendsResponse.data.friends);
-      setFriendRequests(myFriendsResponse.data.friendRequests);
-    }
     getMyFriends();
   }, [user]);
 
@@ -32,9 +40,33 @@ const Friends = () => {
     setInputValue("");
   };
 
-  const handleYes = () => {
-    // TODO: implement this
+  const handleYes = async () => {
     setInputValue("");
+
+    await axios.post("/api/send-friend-request", {
+      sentByUserId: user.id,
+      requestedUserId: friendToAdd.id,
+    });
+
+    setFriendToAdd(null);
+
+    // TODO: tell user friend request was sent if success above
+  };
+
+  const respondToFriendRequest = async (action: string, friendId: number) => {
+    setIsAddingFriend(true);
+
+    await axios.post("/api/respond-to-friend-request", {
+      userId: user.id,
+      friendId: friendId,
+      accepted: action === "accepted" ? true : false,
+    });
+
+    if (action === "accepted") {
+      getMyFriends();
+    }
+
+    setIsAddingFriend(false);
   };
 
   if (!user || user.isLoggedIn === false) {
@@ -44,9 +76,20 @@ const Friends = () => {
   return (
     <Layout>
       <h1 style={{ margin: 0, padding: 0 }}>Your Friends</h1>
-      <p style={{ margin: 0, padding: 0, color: "#7f7d7d" }}>
-        {myFriends.length} {myFriends.length > 1 ? "Friends" : "Friend"}
-      </p>
+      {isLoadingFriends && (
+        <div style={{ width: 300 }}>
+          <Skeleton />
+          <Skeleton />
+          <Skeleton />
+        </div>
+      )}
+
+      {!isLoadingFriends && (
+        <p style={{ margin: 0, padding: 0, color: "#7f7d7d" }}>
+          {myFriends.length} {myFriends.length > 1 ? "Friends" : "Friend"}
+        </p>
+      )}
+
       {myFriends.map((friend) => {
         return (
           <div>
@@ -67,6 +110,19 @@ const Friends = () => {
       })}
       <h1 style={{ margin: 0, padding: 0, marginTop: 30 }}>Friend Requests</h1>
 
+      {isLoadingFriends && (
+        <div style={{ width: 300 }}>
+          <Skeleton />
+          <Skeleton />
+          <Skeleton />
+        </div>
+      )}
+
+      {!isLoadingFriends && friendRequests.length === 0 && (
+        <p style={{ margin: 0, padding: 0, color: "#7f7d7d" }}>
+          You have no friend requests.
+        </p>
+      )}
       {friendRequests.map((friendRequest) => {
         return (
           <div>
@@ -85,21 +141,32 @@ const Friends = () => {
               <p style={{ margin: 0, padding: 0 }}>{friendRequest.email}</p>
             </div>
 
-            <Button
-              variant="outlined"
-              color="primary"
-              size="small"
-              style={{ marginRight: 15, marginBottom: 18, marginLeft: 10 }}
-            >
-              Accept
-            </Button>
-            <Button
-              variant="outlined"
-              size="small"
-              style={{ marginRight: 15, marginBottom: 18 }}
-            >
-              Decline
-            </Button>
+            {isAddingFriend && <p>Loading...</p>}
+            {!isAddingFriend && (
+              <>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  size="small"
+                  style={{ marginRight: 15, marginBottom: 18, marginLeft: 10 }}
+                  onClick={(e) =>
+                    respondToFriendRequest("accepted", friendRequest.id)
+                  }
+                >
+                  Accept
+                </Button>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  style={{ marginRight: 15, marginBottom: 18 }}
+                  onClick={(e) =>
+                    respondToFriendRequest("declined", friendRequest.id)
+                  }
+                >
+                  Decline
+                </Button>
+              </>
+            )}
           </div>
         );
       })}

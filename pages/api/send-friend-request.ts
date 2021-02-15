@@ -12,11 +12,16 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   const { sentByUserId, requestedUserId } = req.body;
 
+  if (sentByUserId === requestedUserId) {
+    return res
+      .status(400)
+      .json({ error: true, message: "Cannot add yourself as a friend" });
+  }
+
   await prisma.userFriendRequests.create({
     data: {
       requestedUserId: +requestedUserId,
       sentByUserId: +sentByUserId,
-      requestAccepted: false,
     },
   });
   // TODO: send email telling the user they got a friend request

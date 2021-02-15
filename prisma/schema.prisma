@@ -38,7 +38,6 @@ model UserFriendRequests {
   sentByUser      User     @relation("sentByUser", fields: [sentByUserId], references: [id])
   requestedUserId Int
   requestedUser   User     @relation("requestedUser", fields: [requestedUserId], references: [id])
-  requestAccepted Boolean  @default(false)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @default(now())
 }
