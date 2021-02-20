@@ -1,43 +1,106 @@
 import React from "react";
 import Head from "next/head";
 import Header from "./Header";
+import BottomNavigation from "@material-ui/core/BottomNavigation";
+import BottomNavigationAction from "@material-ui/core/BottomNavigationAction";
+import RestoreIcon from "@material-ui/icons/Restore";
+import FavoriteIcon from "@material-ui/icons/Favorite";
+import LocationOnIcon from "@material-ui/icons/LocationOn";
+import { makeStyles } from "@material-ui/core/styles";
+import HomeIcon from "@material-ui/icons/Home";
+import PersonIcon from "@material-ui/icons/Person";
 
-const Layout = ({ children }) => (
-  <>
-    <Head>
-      <title>Babysitter App</title>
-    </Head>
-    <style jsx global>{`
-      *,
-      *::before,
-      *::after {
-        box-sizing: border-box;
-      }
+const useStyles = makeStyles({
+  root: {
+    width: 500,
+  },
+});
 
-      body {
-        margin: 0;
-        color: #333;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-          "Helvetica Neue", Arial, Noto Sans, sans-serif, "Apple Color Emoji",
-          "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-      }
+const Layout = ({ children }) => {
+  const classes = useStyles();
+  const [value, setValue] = React.useState(0);
+  return (
+    <>
+      <Head>
+        <title>Babysitter App</title>
+      </Head>
+      <style jsx global>{`
+        *,
+        *::before,
+        *::after {
+          box-sizing: border-box;
+        }
 
-      .container {
-        max-width: 65rem;
-        margin: 1.5rem auto;
-        padding-left: 1rem;
-        padding-right: 1rem;
-      }
-      .MuiOutlinedInput-notchedOutline {
-        border-color: rgb(255 255 255 / 34%) !important;
-      }
-    `}</style>
-    <Header />
+        body {
+          margin: 0;
+          color: #333;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+            "Helvetica Neue", Arial, Noto Sans, sans-serif, "Apple Color Emoji",
+            "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        }
 
-    <main>
-      <div className="container">{children}</div>
-    </main>
-  </>
-);
+        .container {
+          max-width: 65rem;
+          margin: 1.5rem auto;
+          padding-left: 1rem;
+          padding-right: 1rem;
+        }
+        .MuiOutlinedInput-notchedOutline {
+          border-color: rgb(255 255 255 / 34%) !important;
+        }
+
+        .bottomNav {
+          display: none !important;
+          position: fixed;
+          bottom: 0;
+          width: 100%;
+        }
+
+        @media (max-width: 480px) {
+          .bottomNav {
+            display: block !important;
+          }
+          .desktopNav {
+            display: none !important;
+          }
+        }
+
+        @media only screen and (min-width: 768px) {
+        }
+      `}</style>
+      <Header />
+
+      <main>
+        <div className="container">{children}</div>
+        <div className="bottomNav">
+          <BottomNavigation
+            style={{ backgroundColor: "rgba(0, 0, 0, 1)" }}
+            value={value}
+            onChange={(event, newValue) => {
+              setValue(newValue);
+            }}
+            showLabels
+          >
+            <BottomNavigationAction
+              label="Home"
+              href="/home"
+              icon={<HomeIcon />}
+            />
+            <BottomNavigationAction
+              label="Friends"
+              href="/friends"
+              icon={<FavoriteIcon />}
+            />
+            <BottomNavigationAction
+              label="Profile"
+              href="/profile"
+              icon={<PersonIcon />}
+            />
+          </BottomNavigation>
+        </div>
+      </main>
+    </>
+  );
+};
 
 export default Layout;

@@ -31,55 +31,47 @@ const Header = () => {
   const classes = useStyles();
 
   return (
-    <AppBar position="static" color="transparent">
-      <Toolbar>
-        <IconButton
-          edge="start"
-          className={classes.menuButton}
-          color="inherit"
-          aria-label="menu"
-        >
-          <MenuIcon />
-        </IconButton>
-        <Typography variant="h6" className={classes.title}>
-          BabySitting App
-        </Typography>
-        {!user?.isLoggedIn && (
-          <>
-            <Button color="inherit" href="/login">
-              Login
-            </Button>
-            <Button color="inherit" href="/signup">
-              Signup
-            </Button>
-          </>
-        )}
-        {user?.isLoggedIn && (
-          <>
-            <Button color="inherit" href="/home">
-              Home
-            </Button>
-            <Button color="inherit" href="/friends">
-              Friends
-            </Button>
-            <Button color="inherit" href="/profile">
-              Profile
-            </Button>
-            <Button
-              color="inherit"
-              href="/api/logout"
-              onClick={async (e) => {
-                e.preventDefault();
-                await mutateUser(fetchJson("/api/logout"));
-                router.push("/login");
-              }}
-            >
-              Logout
-            </Button>
-          </>
-        )}
-      </Toolbar>
-    </AppBar>
+    <div className="desktopNav">
+      <AppBar position="static" color="primary">
+        <Toolbar>
+          <Typography variant="h6" className={classes.title}></Typography>
+          {!user?.isLoggedIn && (
+            <>
+              <Button color="inherit" href="/login">
+                Login
+              </Button>
+              <Button color="inherit" href="/signup">
+                Signup
+              </Button>
+            </>
+          )}
+          {user?.isLoggedIn && (
+            <>
+              <Button color="inherit" href="/home">
+                Home
+              </Button>
+              <Button color="inherit" href="/friends">
+                Friends
+              </Button>
+              <Button color="inherit" href="/profile">
+                Profile
+              </Button>
+              <Button
+                color="inherit"
+                href="/api/logout"
+                onClick={async (e) => {
+                  e.preventDefault();
+                  await mutateUser(fetchJson("/api/logout"));
+                  router.push("/login");
+                }}
+              >
+                Logout
+              </Button>
+            </>
+          )}
+        </Toolbar>
+      </AppBar>
+    </div>
   );
 };
 
