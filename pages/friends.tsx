@@ -4,9 +4,14 @@ import { IUser } from "../types/IUser";
 import SearchUsers from "../components/SearchUsers";
 import { User } from "@prisma/client";
 import { useEffect, useState } from "react";
-import { Paper, Button } from "@material-ui/core";
+import { Paper, Button, Snackbar } from "@material-ui/core";
 import axios from "axios";
 import Skeleton from "@material-ui/lab/Skeleton";
+import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
+
+function Alert(props: AlertProps) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 const Friends = () => {
   let data = useUser({ redirectTo: "/login" });
@@ -17,11 +22,17 @@ const Friends = () => {
   const [friendRequests, setFriendRequests] = useState<IUser[]>([]);
   const [isAddingFriend, setIsAddingFriend] = useState(false);
   const [isLoadingFriends, setIsLoadingFriends] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
 
   async function getMyFriends() {
     setIsLoadingFriends(true);
-
-    // TODO: need leading indicator for this too
     const myFriendsResponse = await axios.get(
       `/api/my-friends?userId=${user.id}`
     );
@@ -43,14 +54,17 @@ const Friends = () => {
   const handleYes = async () => {
     setInputValue("");
 
-    await axios.post("/api/send-friend-request", {
-      sentByUserId: user.id,
-      requestedUserId: friendToAdd.id,
-    });
+    try {
+      await axios.post("/api/send-friend-request", {
+        sentByUserId: user.id,
+        requestedUserId: friendToAdd.id,
+      });
+      setOpen(true);
+    } catch (error) {
+      console.log("error adding friend");
+    }
 
     setFriendToAdd(null);
-
-    // TODO: tell user friend request was sent if success above
   };
 
   const respondToFriendRequest = async (action: string, friendId: number) => {
@@ -204,6 +218,12 @@ const Friends = () => {
         inputValue={inputValue}
         setInputValue={setInputValue}
       />
+
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="success">
+          Friend request sent!
+        </Alert>
+      </Snackbar>
     </Layout>
   );
 };
