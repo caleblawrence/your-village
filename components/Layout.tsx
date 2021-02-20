@@ -28,6 +28,9 @@ const Layout = ({ children }) => (
         padding-left: 1rem;
         padding-right: 1rem;
       }
+      .MuiOutlinedInput-notchedOutline {
+        border-color: rgb(255 255 255 / 34%) !important;
+      }
     `}</style>
     <Header />
 

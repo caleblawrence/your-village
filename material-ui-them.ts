@@ -9,7 +9,7 @@ const theme = createMuiTheme({
     type: "dark",
     primary: {
       // Purple and green play nicely together.
-      main: "#b986ff",
+      main: "#81d6ff",
     },
     secondary: {
       // This is green.A700 as hex.
