@@ -1,22 +1,20 @@
 import { createMuiTheme } from "@material-ui/core/styles";
-import { red } from "@material-ui/core/colors";
+import { purple } from "@material-ui/core/colors";
 
-// Create a theme instance.
 const theme = createMuiTheme({
   palette: {
+    background: {
+      default: "rgba(0, 0, 0, 1)",
+    },
+    type: "dark",
     primary: {
-      main: "#556cd6",
+      // Purple and green play nicely together.
+      main: "#b986ff",
     },
     secondary: {
-      main: "#19857b",
-    },
-    error: {
-      main: red.A400,
-    },
-    background: {
-      default: "#fff",
+      // This is green.A700 as hex.
+      main: "#11cb5f",
     },
   },
 });
-
 export default theme;

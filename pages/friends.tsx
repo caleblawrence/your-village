@@ -99,7 +99,7 @@ const Friends = () => {
       )}
 
       {!isLoadingFriends && (
-        <p style={{ margin: 0, padding: 0, color: "#7f7d7d" }}>
+        <p style={{ margin: 0, padding: 0, color: "rgb(204 204 204)" }}>
           {myFriends.length} {myFriends.length > 1 ? "Friends" : "Friend"}
         </p>
       )}
@@ -133,7 +133,7 @@ const Friends = () => {
       )}
 
       {!isLoadingFriends && friendRequests.length === 0 && (
-        <p style={{ margin: 0, padding: 0, color: "#7f7d7d" }}>
+        <p style={{ margin: 0, padding: 0, color: "rgb(204 204 204)" }}>
           You have no friend requests.
         </p>
       )}

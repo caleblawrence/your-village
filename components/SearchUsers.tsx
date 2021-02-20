@@ -8,6 +8,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { User } from "@prisma/client";
 import axios from "axios";
 import useDebounce from "./useDebounce";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const useStyles = makeStyles((theme) => ({
   icon: {
@@ -69,7 +70,23 @@ function SearchUsers(props: Props) {
         setInputValue(newInputValue);
       }}
       renderInput={(params) => (
-        <TextField {...params} label="Name" variant="outlined" fullWidth />
+        <TextField
+          {...params}
+          label="Name"
+          variant="outlined"
+          fullWidth
+          InputProps={{
+            ...params.InputProps,
+            endAdornment: (
+              <React.Fragment>
+                {isSearching ? (
+                  <CircularProgress color="inherit" size={20} />
+                ) : null}
+                {params.InputProps.endAdornment}
+              </React.Fragment>
+            ),
+          }}
+        />
       )}
       renderOption={(option) => {
         return (

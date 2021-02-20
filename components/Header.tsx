@@ -31,7 +31,7 @@ const Header = () => {
   const classes = useStyles();
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" color="primary">
       <Toolbar>
         <IconButton
           edge="start"
@@ -56,6 +56,9 @@ const Header = () => {
         )}
         {user?.isLoggedIn && (
           <>
+            <Button color="inherit" href="/home">
+              Home
+            </Button>
             <Button color="inherit" href="/friends">
               Friends
             </Button>
