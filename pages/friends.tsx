@@ -42,7 +42,7 @@ const Friends = () => {
   }
 
   useEffect(() => {
-    if (user == null) return;
+    if (user == null || user.id == undefined) return;
     getMyFriends();
   }, [user]);
 
@@ -106,7 +106,7 @@ const Friends = () => {
 
       {myFriends.map((friend) => {
         return (
-          <div>
+          <div key={friend.id}>
             <p
               style={{
                 margin: 0,
@@ -139,7 +139,7 @@ const Friends = () => {
       )}
       {friendRequests.map((friendRequest) => {
         return (
-          <div>
+          <div key={friendRequest.id}>
             <div style={{ display: "inline-block" }}>
               <p
                 style={{
