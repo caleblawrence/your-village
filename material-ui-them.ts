@@ -4,16 +4,15 @@ import { purple } from "@material-ui/core/colors";
 const theme = createMuiTheme({
   palette: {
     background: {
-      default: "rgba(0, 0, 0, 1)",
+      default: "#010101",
     },
     type: "dark",
     primary: {
-      // Purple and green play nicely together.
-      main: "#81d6ff",
+      main: "#acdbdf",
     },
     secondary: {
       // This is green.A700 as hex.
-      main: "#11cb5f",
+      main: "#69779b",
     },
   },
 });

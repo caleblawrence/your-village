@@ -32,32 +32,32 @@ const Header = () => {
 
   return (
     <div className="desktopNav">
-      <AppBar position="static" color="primary">
+      <AppBar position="static" style={{ backgroundColor: "#69779b" }}>
         <Toolbar>
           <Typography variant="h6" className={classes.title}></Typography>
           {!user?.isLoggedIn && (
             <>
-              <Button color="inherit" href="/login">
+              <Button href="/login" style={{ color: "#f0ece2" }}>
                 Login
               </Button>
-              <Button color="inherit" href="/signup">
+              <Button style={{ color: "#f0ece2" }} href="/signup">
                 Signup
               </Button>
             </>
           )}
           {user?.isLoggedIn && (
             <>
-              <Button color="inherit" href="/home">
+              <Button style={{ color: "#f0ece2" }} href="/home">
                 Home
               </Button>
-              <Button color="inherit" href="/friends">
+              <Button style={{ color: "#f0ece2" }} href="/friends">
                 Friends
               </Button>
-              <Button color="inherit" href="/profile">
+              <Button style={{ color: "#f0ece2" }} href="/profile">
                 Profile
               </Button>
               <Button
-                color="inherit"
+                style={{ color: "#f0ece2" }}
                 href="/api/logout"
                 onClick={async (e) => {
                   e.preventDefault();

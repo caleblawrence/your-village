@@ -59,7 +59,7 @@ const Login = () => {
           variant="contained"
           color="primary"
           onClick={handleLogin}
-          size="large"
+          size="medium"
           style={{ marginTop: 10, display: "block" }}
         >
           Login

@@ -89,58 +89,28 @@ const Friends = () => {
 
   return (
     <Layout>
-      <h1 style={{ margin: 0, padding: 0 }}>Your Friends</h1>
-      {isLoadingFriends && (
-        <div style={{ width: 300 }}>
-          <Skeleton />
-          <Skeleton />
-          <Skeleton />
-        </div>
-      )}
-
-      {!isLoadingFriends && (
-        <p style={{ margin: 0, padding: 0, color: "rgb(204 204 204)" }}>
-          {myFriends.length} {myFriends.length > 1 ? "Friends" : "Friend"}
-        </p>
-      )}
-
-      {myFriends.map((friend) => {
-        return (
-          <div key={friend.id}>
-            <p
-              style={{
-                margin: 0,
-                padding: 0,
-                marginTop: 10,
-                fontSize: 16,
-                fontWeight: 500,
-              }}
-            >
-              {friend.name}
-            </p>
-            <p style={{ margin: 0, padding: 0 }}>{friend.email}</p>
+      <Paper
+        elevation={3}
+        style={{ padding: 15, backgroundColor: "rgb(28 29 33)" }}
+      >
+        <h1 style={{ margin: 0, padding: 0 }}>Your Friends</h1>
+        {isLoadingFriends && (
+          <div style={{ width: 300 }}>
+            <Skeleton />
+            <Skeleton />
+            <Skeleton />
           </div>
-        );
-      })}
-      <h1 style={{ margin: 0, padding: 0, marginTop: 30 }}>Friend Requests</h1>
+        )}
 
-      {isLoadingFriends && (
-        <div style={{ width: 300 }}>
-          <Skeleton />
-          <Skeleton />
-          <Skeleton />
-        </div>
-      )}
+        {!isLoadingFriends && (
+          <p style={{ margin: 0, padding: 0, color: "rgb(204 204 204)" }}>
+            {myFriends.length} {myFriends.length > 1 ? "Friends" : "Friend"}
+          </p>
+        )}
 
-      {!isLoadingFriends && friendRequests.length === 0 && (
-        <p style={{ margin: 0, padding: 0, color: "rgb(204 204 204)" }}>
-          You have no friend requests.
-        </p>
-      )}
-      {friendRequests.map((friendRequest) => {
-        return (
-          <div key={friendRequest.id}>
-            <div style={{ display: "inline-block" }}>
+        {myFriends.map((friend) => {
+          return (
+            <div key={friend.id}>
               <p
                 style={{
                   margin: 0,
@@ -150,80 +120,135 @@ const Friends = () => {
                   fontWeight: 500,
                 }}
               >
-                {friendRequest.name}
+                {friend.name}
               </p>
-              <p style={{ margin: 0, padding: 0 }}>{friendRequest.email}</p>
+              <p style={{ margin: 0, padding: 0, color: "rgb(204 204 204)" }}>
+                {friend.email}
+              </p>
             </div>
+          );
+        })}
+      </Paper>
 
-            {isAddingFriend && <p>Loading...</p>}
-            {!isAddingFriend && (
-              <>
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  size="small"
-                  style={{ marginRight: 15, marginBottom: 18, marginLeft: 10 }}
-                  onClick={(e) =>
-                    respondToFriendRequest("accepted", friendRequest.id)
-                  }
-                >
-                  Accept
-                </Button>
-                <Button
-                  variant="outlined"
-                  size="small"
-                  style={{ marginRight: 15, marginBottom: 18 }}
-                  onClick={(e) =>
-                    respondToFriendRequest("declined", friendRequest.id)
-                  }
-                >
-                  Decline
-                </Button>
-              </>
-            )}
+      <Paper
+        elevation={3}
+        style={{ padding: 15, backgroundColor: "rgb(28 29 33)", marginTop: 20 }}
+      >
+        <h1 style={{ margin: 0, padding: 0, marginTop: 0 }}>Friend Requests</h1>
+
+        {isLoadingFriends && (
+          <div style={{ width: 300 }}>
+            <Skeleton />
+            <Skeleton />
+            <Skeleton />
           </div>
-        );
-      })}
-      <h1 style={{ margin: 0, padding: 0, marginTop: 30 }}>Add Friends</h1>
-      {friendToAdd && (
-        <Paper
-          elevation={3}
-          style={{ padding: 10, maxWidth: 400, marginBottom: 10 }}
-        >
-          <h4 style={{ margin: 0, padding: 0 }}>
-            Would you like to send a friend request to this user?
-          </h4>
-          <p style={{ margin: 0, padding: 0, marginTop: 5 }}>
-            {friendToAdd.name}
-          </p>
-          <p style={{ margin: 0, padding: 0, marginTop: 5 }}>
-            {friendToAdd.email}
-          </p>
+        )}
 
-          <Button
-            variant="contained"
-            color="primary"
-            style={{ marginRight: 15 }}
-            onClick={handleYes}
+        {!isLoadingFriends && friendRequests.length === 0 && (
+          <p style={{ margin: 0, padding: 0, color: "rgb(204 204 204)" }}>
+            You have no friend requests.
+          </p>
+        )}
+        {friendRequests.map((friendRequest) => {
+          return (
+            <div key={friendRequest.id}>
+              <div style={{ display: "inline-block" }}>
+                <p
+                  style={{
+                    margin: 0,
+                    padding: 0,
+                    marginTop: 10,
+                    fontSize: 16,
+                    fontWeight: 500,
+                  }}
+                >
+                  {friendRequest.name}
+                </p>
+                <p style={{ margin: 0, padding: 0, color: "rgb(204 204 204)" }}>
+                  {friendRequest.email}
+                </p>
+              </div>
+
+              {isAddingFriend && <p>Loading...</p>}
+              {!isAddingFriend && (
+                <>
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    size="small"
+                    style={{
+                      marginRight: 15,
+                      marginBottom: 18,
+                      marginLeft: 10,
+                    }}
+                    onClick={(e) =>
+                      respondToFriendRequest("accepted", friendRequest.id)
+                    }
+                  >
+                    Accept
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    style={{ marginRight: 15, marginBottom: 18 }}
+                    onClick={(e) =>
+                      respondToFriendRequest("declined", friendRequest.id)
+                    }
+                  >
+                    Decline
+                  </Button>
+                </>
+              )}
+            </div>
+          );
+        })}
+      </Paper>
+
+      <Paper
+        elevation={3}
+        style={{ padding: 15, backgroundColor: "rgb(28 29 33)", marginTop: 20 }}
+      >
+        <h1 style={{ margin: 0, padding: 0, marginBottom: 10 }}>Add Friends</h1>
+        {friendToAdd && (
+          <Paper
+            elevation={3}
+            style={{ padding: 10, maxWidth: 400, marginBottom: 10 }}
           >
-            Yes
-          </Button>
-          <Button variant="contained" onClick={handleNo}>
-            No
-          </Button>
-        </Paper>
-      )}
-      <SearchUsers
-        setFriendToAdd={setFriendToAdd}
-        inputValue={inputValue}
-        setInputValue={setInputValue}
-      />
+            <h4 style={{ margin: 0, padding: 0 }}>
+              Would you like to send a friend request to this user?
+            </h4>
+            <p style={{ margin: 0, padding: 0, marginTop: 5 }}>
+              {friendToAdd.name}
+            </p>
+            <p style={{ margin: 0, padding: 0, marginTop: 5 }}>
+              {friendToAdd.email}
+            </p>
 
-      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity="success">
-          Friend request sent!
-        </Alert>
-      </Snackbar>
+            <Button
+              variant="contained"
+              color="primary"
+              style={{ marginRight: 15 }}
+              onClick={handleYes}
+            >
+              Yes
+            </Button>
+            <Button variant="contained" onClick={handleNo}>
+              No
+            </Button>
+          </Paper>
+        )}
+        <SearchUsers
+          setFriendToAdd={setFriendToAdd}
+          inputValue={inputValue}
+          setInputValue={setInputValue}
+        />
+
+        <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+          <Alert onClose={handleClose} severity="success">
+            Friend request sent!
+          </Alert>
+        </Snackbar>
+      </Paper>
     </Layout>
   );
 };
