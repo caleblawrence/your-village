@@ -11,14 +11,16 @@ generator client {
 }
 
 model User {
-  id                 Int                  @id @default(autoincrement())
-  name               String
-  email              String               @unique()
-  password           String
-  UserFriends        UserFriend[]         @relation("user")
-  Friends            UserFriend[]         @relation("friend")
-  RequestedFriends   UserFriendRequests[] @relation("requestedUser")
-  UserFriendRequests UserFriendRequests[] @relation("sentByUser")
+  id                   Int                  @id @default(autoincrement())
+  name                 String
+  email                String               @unique
+  password             String
+  UserFriends          UserFriend[]         @relation("user")
+  Friends              UserFriend[]         @relation("friend")
+  RequestedFriends     UserFriendRequests[] @relation("requestedUser")
+  UserFriendRequests   UserFriendRequests[] @relation("sentByUser")
+  Opportunity          Opportunity[]        @relation("babySitter")
+  RequestedOppertunity Opportunity[]        @relation("requestedByUser")
 }
 
 model UserFriend {
@@ -29,6 +31,7 @@ model UserFriend {
   friend    User     @relation("friend", fields: [friendId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
+
   @@unique([userId, friendId], name: "user_friend_unique_constraint")
 }
 
@@ -40,5 +43,18 @@ model UserFriendRequests {
   requestedUser   User     @relation("requestedUser", fields: [requestedUserId], references: [id])
   createdAt       DateTime @default(now())
   updatedAt       DateTime @default(now())
+
   @@unique([sentByUserId, requestedUserId], name: "sentByUser_requestedUser_unique_constraint")
+}
+
+model Opportunity {
+  id                Int      @id @default(autoincrement())
+  date              DateTime
+  hours             Int
+  requestedByUserId Int
+  requestedByUser   User     @relation("requestedByUser", fields: [requestedByUserId], references: [id])
+  babysitterId      Int?
+  babySitter        User?    @relation("babySitter", fields: [babysitterId], references: [id])
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @default(now())
 }

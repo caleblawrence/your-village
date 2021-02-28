@@ -13,10 +13,16 @@ const Home = (): JSX.Element => {
   let data = useUser({ redirectTo: "/login" });
   let user: IUser = data.user;
   const [selectedDate, handleDateChange] = useState<Date | null>(null);
+  const [hours, setHours] = useState<Number | null>(null);
 
   if (!user || user.isLoggedIn === false) {
     return <Layout>loading...</Layout>;
   }
+
+  const handleSubmit = () => {
+    console.log("hello");
+    // TODO: add babsitting thing
+  };
 
   return (
     <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -46,14 +52,18 @@ const Home = (): JSX.Element => {
             variant="outlined"
             label="How many hours"
             style={{ marginTop: 20, width: 300, display: "block" }}
+            value={hours}
+            onChange={(e) => setHours(+e.target.value)}
+            type="number"
             fullWidth
           ></TextField>
           <Button
             variant="contained"
             color="primary"
-            onClick={(e) => console.log("hi")}
+            onClick={handleSubmit}
             size="medium"
             style={{ marginTop: 10, display: "block" }}
+            disabled={hours === null || selectedDate == null}
           >
             Submit
           </Button>
