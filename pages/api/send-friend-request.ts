@@ -1,18 +1,23 @@
 import assert from "assert";
-import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../lib/prisma";
+import withSession from "../../lib/session";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+export default withSession(async (req, res, session) => {
   try {
-    assert.notEqual(null, req.body.sentByUserId, "sentByUserId required");
     assert.notEqual(null, req.body.requestedUserId, "requestedUserId required");
   } catch (bodyError) {
     return res.status(400).json({ error: true, message: bodyError.message });
   }
 
-  const { sentByUserId, requestedUserId } = req.body;
+  if (req.session.get("user") === undefined) {
+    return res.status(403).json({ error: true, message: "restricted" });
+  }
 
-  if (sentByUserId === requestedUserId) {
+  let userId = req.session.get("user").id;
+
+  const { requestedUserId } = req.body;
+
+  if (userId === requestedUserId) {
     return res
       .status(400)
       .json({ error: true, message: "Cannot add yourself as a friend" });
@@ -21,10 +26,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   await prisma.userFriendRequests.create({
     data: {
       requestedUserId: +requestedUserId,
-      sentByUserId: +sentByUserId,
+      sentByUserId: +userId,
     },
   });
   // TODO: send email telling the user they got a friend request
 
   res.status(200).json({ succes: true });
-};
+});

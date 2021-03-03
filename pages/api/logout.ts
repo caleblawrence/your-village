@@ -1,6 +1,6 @@
 import withSession from "../../lib/session";
 
-export default withSession(async (req, res) => {
+export default withSession(async (req, res, session) => {
   req.session.destroy();
-  res.json({ isLoggedIn: false });
+  return res.status(200).json({ message: "Logged out" });
 });

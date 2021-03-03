@@ -1,16 +1,22 @@
 import assert from "assert";
 import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../lib/prisma";
+import withSession from "../../lib/session";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+export default withSession(async (req, res, session) => {
   try {
-    assert.notEqual(null, req.body.userId, "userId required");
     assert.notEqual(null, req.body.friendId, "friendId required");
     assert.notEqual(null, req.body.accepted, "accepted required");
   } catch (bodyError) {
     return res.status(400).json({ error: true, message: bodyError.message });
   }
-  const { userId, friendId, accepted } = req.body;
+  const { friendId, accepted } = req.body;
+
+  if (req.session.get("user") === undefined) {
+    return res.status(403).json({ error: true, message: "restricted" });
+  }
+
+  let userId = req.session.get("user").id;
 
   const friendRequest = await prisma.userFriendRequests.findFirst({
     where: {
@@ -55,4 +61,4 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   res.status(200).json({ succes: true });
-};
+});

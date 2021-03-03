@@ -39,19 +39,15 @@ export default withSession(async (req: any, res: NextApiResponse) => {
         },
       });
 
-      const token = jwt.sign(
-        { userId: user.id, email: user.email },
-        JWT_SECRET,
-        {
-          expiresIn: 3000, //50 minutes
-        }
-      );
-      delete user.password;
-      req.session.set("user", user);
-      await req.session.save();
+      req.session.set("user", {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        isLoggedIn: true,
+      });
 
-      res.status(200).json({ token });
-      return;
+      await req.session.save();
+      return res.status(200).json({ message: "Logged in" });
     });
   } catch (error) {
     const { response: fetchResponse } = error;

@@ -1,18 +1,15 @@
-import assert from "assert";
-import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../lib/prisma";
+import withSession from "../../lib/session";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
-  try {
-    assert.notEqual(null, req.query.userId, "userId required");
-  } catch (bodyError) {
-    return res.status(400).json({ error: true, message: bodyError.message });
+export default withSession(async (req, res, session) => {
+  if (req.session.get("user") === undefined) {
+    return res.status(403).json({ error: true, message: "restricted" });
   }
 
-  const userId = req.query.userId as string;
+  let userId = req.session.get("user").id;
 
   let rawFriendData = await prisma.userFriend.findMany({
-    where: { userId: +userId },
+    where: { userId: userId },
     select: {
       friend: {
         select: {
@@ -42,6 +39,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   });
 
   let friendRequests = rawFriendRequestData.map((row) => row.sentByUser);
-
   res.status(200).json({ friends: friends, friendRequests: friendRequests });
-};
+});

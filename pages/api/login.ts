@@ -1,13 +1,9 @@
-import withSession from "../../lib/session";
 import prisma from "../../lib/prisma";
-import type { NextApiRequest, NextApiResponse } from "next";
 import assert from "assert";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import withSession from "../../lib/session";
 
-const { JWT_SECRET } = process.env;
-
-export default withSession(async (req: any, res: NextApiResponse) => {
+export default withSession(async (req, res, session) => {
   try {
     assert.notEqual(null, req.body.email, "Email required");
     assert.notEqual(null, req.body.password, "Password required");
@@ -30,14 +26,15 @@ export default withSession(async (req: any, res: NextApiResponse) => {
   var match = await bcrypt.compare(password, user.password);
 
   if (match) {
-    const token = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET, {
-      expiresIn: 3000, //50 minutes
+    req.session.set("user", {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      isLoggedIn: true,
     });
-    // this removes the password hash from the object so that it's not sent to the client
-    delete user.password;
-    req.session.set("user", user);
+
     await req.session.save();
-    return res.status(200).json({ token });
+    return res.status(200).json({ message: "Logged in" });
   }
 
   return res.status(401).json({ error: true, message: "Auth Failed" });

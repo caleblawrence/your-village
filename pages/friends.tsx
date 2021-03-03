@@ -33,9 +33,7 @@ const Friends = () => {
 
   async function getMyFriends() {
     setIsLoadingFriends(true);
-    const myFriendsResponse = await axios.get(
-      `/api/my-friends?userId=${user.id}`
-    );
+    const myFriendsResponse = await axios.get(`/api/my-friends`);
     setMyFriends(myFriendsResponse.data.friends);
     setFriendRequests(myFriendsResponse.data.friendRequests);
     setIsLoadingFriends(false);
@@ -56,7 +54,6 @@ const Friends = () => {
 
     try {
       await axios.post("/api/send-friend-request", {
-        sentByUserId: user.id,
         requestedUserId: friendToAdd.id,
       });
       setOpen(true);
@@ -71,7 +68,6 @@ const Friends = () => {
     setIsAddingFriend(true);
 
     await axios.post("/api/respond-to-friend-request", {
-      userId: user.id,
       friendId: friendId,
       accepted: action === "accepted" ? true : false,
     });

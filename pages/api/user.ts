@@ -1,19 +1,10 @@
 import withSession from "../../lib/session";
-import { User } from "@prisma/client";
 
-export default withSession(async (req, res) => {
-  const user: User = req.session.get("user");
-
-  if (user) {
-    // in a real world application you might read the user id from the session and then do a database request
-    // to get more information on the user if needed
-    res.json({
-      isLoggedIn: true,
-      ...user,
-    });
-  } else {
-    res.json({
-      isLoggedIn: false,
-    });
+export default withSession(async (req, res, session) => {
+  const user = req.session.get("user");
+  console.log("user", user);
+  if (user !== undefined) {
+    return res.send(user);
   }
+  return res.send({ isLoggedIn: false });
 });
