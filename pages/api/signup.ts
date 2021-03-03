@@ -1,11 +1,9 @@
 import withSession from "../../lib/session";
 import prisma from "../../lib/prisma";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import type { NextApiRequest, NextApiResponse } from "next";
+import type { NextApiResponse } from "next";
 import assert from "assert";
 
-const { JWT_SECRET } = process.env;
 const saltRounds = 10;
 
 export default withSession(async (req: any, res: NextApiResponse) => {

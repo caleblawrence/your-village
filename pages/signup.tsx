@@ -24,7 +24,6 @@ const Signup = () => {
 
     try {
       let response = await axios.post("/api/signup", body);
-      console.log("response", response.data);
       await mutateUser(response.data);
     } catch (error) {
       console.error("An unexpected error happened:", error.response);
