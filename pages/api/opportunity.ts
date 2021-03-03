@@ -43,6 +43,8 @@ export default withSession(async (req, res, session) => {
         .status(409)
         .json({ error: true, message: "opportunity already exists" });
     }
-    return res.status(500).json({ error: true, message: "server error" });
+    return res
+      .status(500)
+      .json({ error: true, message: "internal server error" });
   }
 });
