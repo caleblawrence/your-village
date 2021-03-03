@@ -9,7 +9,7 @@ import { DateTimePicker } from "@material-ui/pickers";
 import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 import axios from "axios";
-import { Alert } from "@material-ui/lab";
+import { Alert, Skeleton } from "@material-ui/lab";
 import { Opportunity, User } from "@prisma/client";
 import { format, formatDistance, formatRelative, subDays } from "date-fns";
 
@@ -125,9 +125,19 @@ const Home = (): JSX.Element => {
             marginTop: 20,
           }}
         >
-          <h1 style={{ margin: 0, padding: 0, marginBottom: 10 }}>
-            My requested dates
-          </h1>
+          <h1 style={{ margin: 0, padding: 0 }}>My requested dates</h1>
+          {isLoadingMyTimes && (
+            <div style={{ width: 300 }}>
+              <Skeleton />
+              <Skeleton />
+              <Skeleton />
+            </div>
+          )}
+          {myRequestedTimes.length === 0 && !isLoadingMyTimes && (
+            <p style={{ margin: 0, padding: 0, color: "rgb(204 204 204)" }}>
+              You don't have any requested dates
+            </p>
+          )}
           {myRequestedTimes.map((time) => {
             return (
               <div key={time.id} style={{ marginBottom: 20 }}>
@@ -142,7 +152,7 @@ const Home = (): JSX.Element => {
                 )}
                 {time.babySitter === null && (
                   <p style={{ margin: 0, padding: 0 }}>
-                    None has volunteered for this yet.
+                    No one has volunteered for this yet.
                   </p>
                 )}
               </div>
