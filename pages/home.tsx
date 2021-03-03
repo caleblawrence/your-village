@@ -2,7 +2,7 @@ import useUser from "../lib/useUser";
 import Layout from "../components/Layout";
 import { IUser } from "../types/IUser";
 import { Button, Paper, Snackbar } from "@material-ui/core";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as React from "react";
 import TextField from "@material-ui/core/TextField";
 import { DateTimePicker } from "@material-ui/pickers";
@@ -10,14 +10,34 @@ import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 import axios from "axios";
 import { Alert } from "@material-ui/lab";
+import { Opportunity, User } from "@prisma/client";
+import { format, formatDistance, formatRelative, subDays } from "date-fns";
 
 const Home = (): JSX.Element => {
   let data = useUser({ redirectTo: "/login" });
   let user: IUser = data.user;
   const [selectedDate, handleDateChange] = useState<Date | null>(null);
-  const [hours, setHours] = useState<Number | null>(null);
+  const [hours, setHours] = useState<Number | string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const [isLoadingMyTimes, setIsLoadingMyTimes] = useState(false);
+  const [myRequestedTimes, setMyRequestedTimes] = useState<
+    (Opportunity & {
+      babySitter: User;
+    })[]
+  >([]);
+
+  useEffect(() => {
+    if (user == null || user.id == undefined) return;
+    getMyRequestedTimes();
+  }, [user]);
+
+  async function getMyRequestedTimes() {
+    setIsLoadingMyTimes(true);
+    const myRequestTimesResponse = await axios.get(`/api/my-requested-times`);
+    setMyRequestedTimes(myRequestTimesResponse.data.requestedTimes);
+    setIsLoadingMyTimes(false);
+  }
 
   const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
     if (reason === "clickaway") {
@@ -33,13 +53,14 @@ const Home = (): JSX.Element => {
   const handleSubmit = async () => {
     try {
       setIsLoading(true);
-      await axios.post("/api/opportunity", {
+      await axios.post("/api/new-opportunity", {
         date: selectedDate,
         hours: hours,
       });
       setOpen(true);
-      setHours(null);
+      setHours("");
       handleDateChange(null);
+      getMyRequestedTimes();
     } catch (error) {
       console.log("error adding opportunity");
     }
@@ -74,8 +95,7 @@ const Home = (): JSX.Element => {
             label="How many hours"
             style={{ marginTop: 20, width: 300, display: "block" }}
             value={hours}
-            onChange={(e) => setHours(+e.target.value)}
-            type="number"
+            onChange={(e) => setHours(e.target.value)}
             fullWidth
           ></TextField>
           <Button
@@ -106,8 +126,28 @@ const Home = (): JSX.Element => {
           }}
         >
           <h1 style={{ margin: 0, padding: 0, marginBottom: 10 }}>
-            My requested times
+            My requested dates
           </h1>
+          {myRequestedTimes.map((time) => {
+            return (
+              <div key={time.id} style={{ marginBottom: 20 }}>
+                <p style={{ fontSize: 20, margin: 0, padding: 0 }}>
+                  {format(new Date(time.date), "LLL do, yyyy h:mm aaa")} for{" "}
+                  {time.hours} hours
+                </p>
+                {time.babySitter !== null && (
+                  <p style={{ margin: 0, padding: 0 }}>
+                    {time.babySitter.name} is babysitting.
+                  </p>
+                )}
+                {time.babySitter === null && (
+                  <p style={{ margin: 0, padding: 0 }}>
+                    None has volunteered for this yet.
+                  </p>
+                )}
+              </div>
+            );
+          })}
         </Paper>
       </Layout>
     </MuiPickersUtilsProvider>
