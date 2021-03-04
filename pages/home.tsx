@@ -11,7 +11,8 @@ import DateFnsUtils from "@date-io/date-fns";
 import axios from "axios";
 import { Alert, Skeleton } from "@material-ui/lab";
 import { Opportunity, User } from "@prisma/client";
-import { format, formatDistance, formatRelative, subDays } from "date-fns";
+import { format } from "date-fns";
+import Divider from "@material-ui/core/Divider";
 
 const Home = (): JSX.Element => {
   let data = useUser({ redirectTo: "/login" });
@@ -72,6 +73,10 @@ const Home = (): JSX.Element => {
       console.log("error adding opportunity");
     }
     setIsLoading(false);
+  };
+
+  const handleVolunteer = (opportunityId: number) => {
+    // TODO: call api
   };
 
   return (
@@ -145,7 +150,7 @@ const Home = (): JSX.Element => {
           )}
           {myRequestedTimes.map((time) => {
             return (
-              <div key={time.id} style={{ marginTop: 20 }}>
+              <div key={time.id} style={{ marginTop: 10 }}>
                 <p className="dateTitle">
                   {format(new Date(time.date), "LLL do, yyyy h:mm aaa")} for{" "}
                   {time.hours} hours
@@ -160,6 +165,7 @@ const Home = (): JSX.Element => {
                     No one has volunteered for this yet.
                   </p>
                 )}
+                <Divider style={{ marginTop: 10, width: 320 }} />
               </div>
             );
           })}
@@ -173,7 +179,7 @@ const Home = (): JSX.Element => {
             marginTop: 20,
           }}
         >
-          <h1 className="title">Opportunities</h1>
+          <h1 className="title">Your friends dates</h1>
           {isLoadingOpportunities && (
             <div style={{ width: 300 }}>
               <Skeleton />
@@ -188,21 +194,33 @@ const Home = (): JSX.Element => {
           )}
           {myOpportunities.map((opportunity) => {
             return (
-              <div key={opportunity.id} style={{ marginTop: 20 }}>
+              <div key={opportunity.id} style={{ marginTop: 10 }}>
                 <p className="dateTitle">
-                  {format(new Date(opportunity.date), "LLL do, yyyy h:mm aaa")}{" "}
+                  {format(new Date(opportunity.date), "LLL do, yyyy h:mmaaa")}{" "}
                   for {opportunity.hours} hours
                 </p>
+                <p style={{ margin: 0, padding: 0, marginTop: 2 }}>
+                  {opportunity.requestedByUser.name}
+                </p>
                 {opportunity.babySitter !== null && (
-                  <p style={{ margin: 0, padding: 0 }}>
+                  <p style={{ margin: 0, padding: 0, marginTop: 2 }}>
                     {opportunity.babySitter.name} is babysitting.
                   </p>
                 )}
                 {opportunity.babySitter === null && (
-                  <p style={{ margin: 0, padding: 0 }}>
-                    No one has volunteered for this yet.
-                  </p>
+                  <Button
+                    color="primary"
+                    onClick={(e) => handleVolunteer(opportunity.id)}
+                    style={{
+                      paddingLeft: 0,
+                      paddingBottom: 0,
+                      marginBottom: 0,
+                    }}
+                  >
+                    Volunteer
+                  </Button>
                 )}
+                <Divider style={{ marginTop: 10, width: 320 }} />
               </div>
             );
           })}
@@ -212,7 +230,6 @@ const Home = (): JSX.Element => {
         .title {
           margin: 0px;
           padding: 0px;
-          margin-bottom: 10px;
         }
         .dateTitle {
           font-size: 20px;
