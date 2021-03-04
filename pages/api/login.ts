@@ -1,6 +1,6 @@
 import prisma from "../../lib/prisma";
 import assert from "assert";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import withSession from "../../lib/session";
 
 export default withSession(async (req, res, session) => {

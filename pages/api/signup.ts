@@ -1,6 +1,6 @@
 import withSession from "../../lib/session";
 import prisma from "../../lib/prisma";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import type { NextApiResponse } from "next";
 import assert from "assert";
 
