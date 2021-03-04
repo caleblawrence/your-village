@@ -140,7 +140,7 @@ const Home = (): JSX.Element => {
           )}
           {myRequestedTimes.map((time) => {
             return (
-              <div key={time.id} style={{ marginBottom: 20 }}>
+              <div key={time.id} style={{ marginTop: 20 }}>
                 <p style={{ fontSize: 20, margin: 0, padding: 0 }}>
                   {format(new Date(time.date), "LLL do, yyyy h:mm aaa")} for{" "}
                   {time.hours} hours
