@@ -20,9 +20,15 @@ const Home = (): JSX.Element => {
   const [hours, setHours] = useState<Number | string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
-  const [isLoadingMyTimes, setIsLoadingMyTimes] = useState(false);
+  const [isLoadingOpportunities, setIsLoadingOpportunities] = useState(false);
   const [myRequestedTimes, setMyRequestedTimes] = useState<
     (Opportunity & {
+      babySitter: User;
+    })[]
+  >([]);
+  const [myOpportunities, setMyOpportunities] = useState<
+    (Opportunity & {
+      requestedByUser: User;
       babySitter: User;
     })[]
   >([]);
@@ -33,10 +39,11 @@ const Home = (): JSX.Element => {
   }, [user]);
 
   async function getMyRequestedTimes() {
-    setIsLoadingMyTimes(true);
-    const myRequestTimesResponse = await axios.get(`/api/my-requested-times`);
+    setIsLoadingOpportunities(true);
+    const myRequestTimesResponse = await axios.get(`/api/opportunities`);
     setMyRequestedTimes(myRequestTimesResponse.data.requestedTimes);
-    setIsLoadingMyTimes(false);
+    setMyOpportunities(myRequestTimesResponse.data.opportunities);
+    setIsLoadingOpportunities(false);
   }
 
   const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
@@ -78,9 +85,7 @@ const Home = (): JSX.Element => {
             marginTop: 20,
           }}
         >
-          <h1 style={{ margin: 0, padding: 0, marginBottom: 10 }}>
-            Enter a date you need free
-          </h1>
+          <h1 className="title">Enter a date you need free</h1>
           <DateTimePicker
             label="Date/Time"
             inputVariant="outlined"
@@ -125,15 +130,15 @@ const Home = (): JSX.Element => {
             marginTop: 20,
           }}
         >
-          <h1 style={{ margin: 0, padding: 0 }}>My requested dates</h1>
-          {isLoadingMyTimes && (
+          <h1 className="title">My requested dates</h1>
+          {isLoadingOpportunities && (
             <div style={{ width: 300 }}>
               <Skeleton />
               <Skeleton />
               <Skeleton />
             </div>
           )}
-          {myRequestedTimes.length === 0 && !isLoadingMyTimes && (
+          {myRequestedTimes.length === 0 && !isLoadingOpportunities && (
             <p style={{ margin: 0, padding: 0, color: "rgb(204 204 204)" }}>
               You don't have any requested dates
             </p>
@@ -141,7 +146,7 @@ const Home = (): JSX.Element => {
           {myRequestedTimes.map((time) => {
             return (
               <div key={time.id} style={{ marginTop: 20 }}>
-                <p style={{ fontSize: 20, margin: 0, padding: 0 }}>
+                <p className="dateTitle">
                   {format(new Date(time.date), "LLL do, yyyy h:mm aaa")} for{" "}
                   {time.hours} hours
                 </p>
@@ -159,7 +164,70 @@ const Home = (): JSX.Element => {
             );
           })}
         </Paper>
+
+        <Paper
+          elevation={3}
+          style={{
+            padding: 15,
+            backgroundColor: "rgb(28 29 33)",
+            marginTop: 20,
+          }}
+        >
+          <h1 className="title">Opportunities</h1>
+          {isLoadingOpportunities && (
+            <div style={{ width: 300 }}>
+              <Skeleton />
+              <Skeleton />
+              <Skeleton />
+            </div>
+          )}
+          {myRequestedTimes.length === 0 && !isLoadingOpportunities && (
+            <p style={{ margin: 0, padding: 0, color: "rgb(204 204 204)" }}>
+              You don't have any opportunities
+            </p>
+          )}
+          {myOpportunities.map((opportunity) => {
+            return (
+              <div key={opportunity.id} style={{ marginTop: 20 }}>
+                <p className="dateTitle">
+                  {format(new Date(opportunity.date), "LLL do, yyyy h:mm aaa")}{" "}
+                  for {opportunity.hours} hours
+                </p>
+                {opportunity.babySitter !== null && (
+                  <p style={{ margin: 0, padding: 0 }}>
+                    {opportunity.babySitter.name} is babysitting.
+                  </p>
+                )}
+                {opportunity.babySitter === null && (
+                  <p style={{ margin: 0, padding: 0 }}>
+                    No one has volunteered for this yet.
+                  </p>
+                )}
+              </div>
+            );
+          })}
+        </Paper>
       </Layout>
+      <style jsx>{`
+        .title {
+          margin: 0px;
+          padding: 0px;
+          margin-bottom: 10px;
+        }
+        .dateTitle {
+          font-size: 20px;
+          margin: 0px;
+          padding: 0px;
+        }
+        @media (max-width: 600px) {
+          .title {
+            font-size: 24px;
+          }
+          .dateTitle {
+            font-size: 16px;
+          }
+        }
+      `}</style>
     </MuiPickersUtilsProvider>
   );
 };
