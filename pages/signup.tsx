@@ -10,7 +10,7 @@ const Signup = () => {
     redirectTo: "/profile",
     redirectIfFound: true,
   });
-  const [errorMsg, setErrorMsg] = useState("");
+  const [errors, setErrors] = useState<String[]>([]);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -27,7 +27,7 @@ const Signup = () => {
       await mutateUser(response.data);
     } catch (error) {
       console.error("An unexpected error happened:", error.response);
-      setErrorMsg(error.response.data.message);
+      setErrors(error.response.data.errors);
     }
   };
 
@@ -66,11 +66,14 @@ const Signup = () => {
           onClick={handleSignup}
           size="large"
           style={{ marginTop: 10, display: "block" }}
+          disabled={email === "" || password === "" || name === ""}
         >
           Sign Up
         </Button>
 
-        {errorMsg !== "" && <p>{errorMsg}</p>}
+        {errors.map((error) => (
+          <p>{error}</p>
+        ))}
       </div>
       <style jsx>{`
         .login {

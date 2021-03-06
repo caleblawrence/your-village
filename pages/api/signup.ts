@@ -33,7 +33,7 @@ export default withSession(async (req: any, res: NextApiResponse) => {
   });
 
   if (usersWithEmail > 0) {
-    res.status(400).json({ error: true, message: "Email already exists." });
+    res.status(400).json({ error: true, errors: ["Email already exists."] });
   }
 
   try {

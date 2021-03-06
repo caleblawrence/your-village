@@ -10,7 +10,7 @@ const Login = () => {
     redirectIfFound: true,
   });
 
-  const [errorMsg, setErrorMsg] = useState("");
+  const [errors, setErrors] = useState<String[]>([]);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -30,7 +30,7 @@ const Login = () => {
       await mutateUser(data);
     } catch (error) {
       console.error("An unexpected error happened:", error);
-      setErrorMsg(error.data.message);
+      setErrors(error.data.errors);
     }
   };
 
@@ -54,7 +54,6 @@ const Login = () => {
           type="password"
           autoComplete="current-password"
         />
-
         <Button
           variant="contained"
           color="primary"
@@ -64,8 +63,9 @@ const Login = () => {
         >
           Login
         </Button>
-
-        {errorMsg !== "" && <p>{errorMsg}</p>}
+        {errors.map((error) => (
+          <p>{error}</p>
+        ))}
       </div>
       <style jsx>{`
         .login {

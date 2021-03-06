@@ -30,7 +30,9 @@ export default withSession(async (req, res, session) => {
   });
 
   if (user == null) {
-    return res.status(404).json({ error: true, message: "User not found" });
+    return res
+      .status(404)
+      .json({ error: true, errors: ["User not found for this email address"] });
   }
 
   var match = await bcrypt.compare(password, user.password);
@@ -47,5 +49,5 @@ export default withSession(async (req, res, session) => {
     return res.status(200).json({ message: "Logged in" });
   }
 
-  return res.status(401).json({ error: true, message: "Auth Failed" });
+  return res.status(401).json({ error: true, errors: ["Incorrect password"] });
 });
