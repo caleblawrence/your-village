@@ -1,5 +1,4 @@
 import prisma from "../../lib/prisma";
-import assert from "assert";
 import bcrypt from "bcryptjs";
 import withSession from "../../lib/session";
 import * as yup from "yup";

@@ -1,15 +1,25 @@
-import assert from "assert";
-import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../lib/prisma";
 import withSession from "../../lib/session";
+import * as yup from "yup";
+
+let requestSchema = yup.object().shape({
+  friendId: yup.number().required(),
+  accepted: yup.boolean().required(),
+});
 
 export default withSession(async (req, res, session) => {
-  try {
-    assert.notEqual(null, req.body.friendId, "friendId required");
-    assert.notEqual(null, req.body.accepted, "accepted required");
-  } catch (bodyError) {
-    return res.status(400).json({ error: true, message: bodyError.message });
+  if (typeof req.body !== "object") {
+    return res
+      .status(400)
+      .json({ error: true, errors: ["request body is required"] });
   }
+
+  try {
+    await requestSchema.validate(req.body);
+  } catch (err) {
+    return res.status(400).json({ error: true, errors: err.errors });
+  }
+
   const { friendId, accepted } = req.body;
 
   if (req.session.get("user") === undefined) {

@@ -1,4 +1,3 @@
-import assert from "assert";
 import prisma from "../../lib/prisma";
 import withSession from "../../lib/session";
 import * as yup from "yup";

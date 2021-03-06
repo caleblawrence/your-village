@@ -1,12 +1,22 @@
-import assert from "assert";
 import prisma from "../../lib/prisma";
 import withSession from "../../lib/session";
+import * as yup from "yup";
+
+let requestSchema = yup.object().shape({
+  requestedUserId: yup.number().required(),
+});
 
 export default withSession(async (req, res, session) => {
+  if (typeof req.body !== "object") {
+    return res
+      .status(400)
+      .json({ error: true, errors: ["request body is required"] });
+  }
+
   try {
-    assert.notEqual(null, req.body.requestedUserId, "requestedUserId required");
-  } catch (bodyError) {
-    return res.status(400).json({ error: true, message: bodyError.message });
+    await requestSchema.validate(req.body);
+  } catch (err) {
+    return res.status(400).json({ error: true, errors: err.errors });
   }
 
   if (req.session.get("user") === undefined) {

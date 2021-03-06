@@ -2,18 +2,27 @@ import withSession from "../../lib/session";
 import prisma from "../../lib/prisma";
 import bcrypt from "bcryptjs";
 import type { NextApiResponse } from "next";
-import assert from "assert";
+import * as yup from "yup";
 
 const saltRounds = 10;
 
+let requestSchema = yup.object().shape({
+  name: yup.string().required(),
+  email: yup.string().required().email(),
+  password: yup.string().required(),
+});
+
 export default withSession(async (req: any, res: NextApiResponse) => {
-  if (req.method !== "POST") return;
+  if (typeof req.body !== "object") {
+    return res
+      .status(400)
+      .json({ error: true, errors: ["request body is required"] });
+  }
 
   try {
-    assert.notEqual(null, req.body.email, "Email required");
-    assert.notEqual(null, req.body.password, "Password required");
-  } catch (bodyError) {
-    res.status(400).json({ error: true, message: bodyError.message });
+    await requestSchema.validate(req.body);
+  } catch (err) {
+    return res.status(400).json({ error: true, errors: err.errors });
   }
   const { name, email, password } = await req.body;
 
