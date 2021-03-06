@@ -2,13 +2,24 @@ import prisma from "../../lib/prisma";
 import assert from "assert";
 import bcrypt from "bcryptjs";
 import withSession from "../../lib/session";
+import * as yup from "yup";
+
+let requestSchema = yup.object().shape({
+  email: yup.string().required().email(),
+  password: yup.string().required(),
+});
 
 export default withSession(async (req, res, session) => {
+  if (typeof req.body !== "object") {
+    return res
+      .status(400)
+      .json({ error: true, errors: ["request body is required"] });
+  }
+
   try {
-    assert.notEqual(null, req.body.email, "Email required");
-    assert.notEqual(null, req.body.password, "Password required");
-  } catch (bodyError) {
-    return res.status(400).json({ error: true, message: bodyError.message });
+    await requestSchema.validate(req.body);
+  } catch (err) {
+    return res.status(400).json({ error: true, errors: err.errors });
   }
 
   const { email, password } = await req.body;
