@@ -7,7 +7,7 @@ import axios from "axios";
 
 const Signup = () => {
   const { mutateUser } = useUser({
-    redirectTo: "/profile",
+    redirectTo: "/home",
     redirectIfFound: true,
   });
   const [errors, setErrors] = useState<String[]>([]);

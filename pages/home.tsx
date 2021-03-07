@@ -70,13 +70,20 @@ const Home = (): JSX.Element => {
       handleDateChange(null);
       getMyRequestedTimes();
     } catch (error) {
-      console.log("error adding opportunity");
+      console.log("error adding opportunity:", error);
     }
     setIsLoading(false);
   };
 
   const handleVolunteer = (opportunityId: number) => {
     // TODO: call api
+  };
+
+  const cancelOpportunity = async (opportunityId: number) => {
+    await axios.post("/api/cancel-opportunity", {
+      opportunityId,
+    });
+    getMyRequestedTimes();
   };
 
   return (
@@ -152,7 +159,7 @@ const Home = (): JSX.Element => {
             return (
               <div key={time.id} style={{ marginTop: 10 }}>
                 <p className="dateTitle">
-                  {format(new Date(time.date), "LLL do, yyyy h:mm aaa")} for{" "}
+                  {format(new Date(time.date), "LLL do, yyyy h:mmaaa")} for{" "}
                   {time.hours} hours
                 </p>
                 {time.babySitter !== null && (
@@ -165,6 +172,18 @@ const Home = (): JSX.Element => {
                     No one has volunteered for this yet.
                   </p>
                 )}
+                <Button
+                  variant="contained"
+                  size="small"
+                  onClick={(e) => cancelOpportunity(time.id)}
+                  style={{
+                    marginBottom: 0,
+                    marginTop: 5,
+                    backgroundColor: "#cc8d8d",
+                  }}
+                >
+                  Cancel
+                </Button>
                 <Divider style={{ marginTop: 10, width: 320 }} />
               </div>
             );
@@ -200,21 +219,24 @@ const Home = (): JSX.Element => {
                   for {opportunity.hours} hours
                 </p>
                 <p style={{ margin: 0, padding: 0, marginTop: 2 }}>
-                  {opportunity.requestedByUser.name}
+                  Requested by{" "}
+                  <strong>{opportunity.requestedByUser.name}</strong>
                 </p>
                 {opportunity.babySitter !== null && (
                   <p style={{ margin: 0, padding: 0, marginTop: 2 }}>
-                    {opportunity.babySitter.name} is babysitting.
+                    <strong>{opportunity.babySitter.name}</strong> is
+                    babysitting.
                   </p>
                 )}
                 {opportunity.babySitter === null && (
                   <Button
                     color="primary"
+                    variant="contained"
+                    size="small"
                     onClick={(e) => handleVolunteer(opportunity.id)}
                     style={{
-                      paddingLeft: 0,
-                      paddingBottom: 0,
                       marginBottom: 0,
+                      marginTop: 5,
                     }}
                   >
                     Volunteer
