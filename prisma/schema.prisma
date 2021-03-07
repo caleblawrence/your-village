@@ -21,6 +21,7 @@ model User {
   UserFriendRequests   UserFriendRequests[] @relation("sentByUser")
   Opportunity          Opportunity[]        @relation("babySitter")
   RequestedOppertunity Opportunity[]        @relation("requestedByUser")
+  Notifications        Notification[]       @relation("notifications")
 }
 
 model UserFriend {
@@ -59,4 +60,14 @@ model Opportunity {
   updatedAt         DateTime @default(now())
 
   @@unique([date, requestedByUserId], name: "date_requestedByUserId_unique_constraint")
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  message   String
+  link      String?
+  userId    Int?
+  User      User?    @relation("notifications", fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }

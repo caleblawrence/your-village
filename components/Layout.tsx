@@ -13,7 +13,6 @@ const Layout = ({ children }) => {
   const router = useRouter();
   const [value, setValue] = React.useState(0);
   useEffect(() => {
-    console.log("router.pathname", router.pathname);
     if (router.pathname === "/home") {
       setValue(0);
     } else if (router.pathname === "/friends") {
