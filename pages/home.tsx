@@ -36,10 +36,10 @@ const Home = (): JSX.Element => {
 
   useEffect(() => {
     if (user == null || user.id == undefined) return;
-    getMyRequestedTimes();
+    refreshOpportunityData();
   }, [user]);
 
-  async function getMyRequestedTimes() {
+  async function refreshOpportunityData() {
     setIsLoadingOpportunities(true);
     const myRequestTimesResponse = await axios.get(`/api/opportunities`);
     setMyRequestedTimes(myRequestTimesResponse.data.requestedTimes);
@@ -68,7 +68,7 @@ const Home = (): JSX.Element => {
       setOpen(true);
       setHours("");
       handleDateChange(null);
-      getMyRequestedTimes();
+      refreshOpportunityData();
     } catch (error) {
       console.log("error adding opportunity:", error);
     }
@@ -79,13 +79,14 @@ const Home = (): JSX.Element => {
     await axios.post("/api/volunteer-for-opportunity", {
       opportunityId,
     });
+    refreshOpportunityData();
   };
 
   const cancelOpportunity = async (opportunityId: number) => {
     await axios.post("/api/cancel-opportunity", {
       opportunityId,
     });
-    getMyRequestedTimes();
+    refreshOpportunityData();
   };
 
   return (
@@ -216,7 +217,13 @@ const Home = (): JSX.Element => {
           {myOpportunities.map((opportunity) => {
             return (
               <div key={opportunity.id} style={{ marginTop: 10 }}>
-                <p className="dateTitle">
+                <p
+                  className={
+                    opportunity.babysitterId == user.id
+                      ? "dateTitle userIsBabysitting"
+                      : "dateTitle"
+                  }
+                >
                   {format(new Date(opportunity.date), "LLL do, yyyy h:mmaaa")}{" "}
                   for {opportunity.hours} hours
                 </p>
@@ -226,8 +233,17 @@ const Home = (): JSX.Element => {
                 </p>
                 {opportunity.babySitter !== null && (
                   <p style={{ margin: 0, padding: 0, marginTop: 2 }}>
-                    <strong>{opportunity.babySitter.name}</strong> is
-                    babysitting.
+                    {opportunity.babysitterId == user.id ? (
+                      <span>
+                        <strong>You</strong> are babysitting.
+                      </span>
+                    ) : (
+                      <span>
+                        {" "}
+                        <strong>{opportunity.babySitter.name}</strong> is
+                        babysitting.
+                      </span>
+                    )}
                   </p>
                 )}
                 {opportunity.babySitter === null && (
@@ -251,6 +267,10 @@ const Home = (): JSX.Element => {
         </Paper>
       </Layout>
       <style jsx>{`
+        .userIsBabysitting {
+          color: #8cebf3;
+          font-weight: 900;
+        }
         .title {
           margin: 0px;
           padding: 0px;

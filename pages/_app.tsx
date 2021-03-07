@@ -1,6 +1,6 @@
 import { SWRConfig } from "swr";
 import fetch from "../lib/fetchJson";
-import theme from "../material-ui-them";
+import theme from "../material-ui-theme";
 import { ThemeProvider } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 
