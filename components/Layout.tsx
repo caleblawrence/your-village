@@ -4,10 +4,10 @@ import Header from "./Header";
 import BottomNavigation from "@material-ui/core/BottomNavigation";
 import BottomNavigationAction from "@material-ui/core/BottomNavigationAction";
 import HomeIcon from "@material-ui/icons/Home";
-import PersonIcon from "@material-ui/icons/Person";
 import { useRouter } from "next/router";
 import SettingsIcon from "@material-ui/icons/Settings";
 import NotificationsIcon from "@material-ui/icons/Notifications";
+import PeopleIcon from "@material-ui/icons/People";
 
 const Layout = ({ children }) => {
   const router = useRouter();
@@ -94,7 +94,7 @@ const Layout = ({ children }) => {
             <BottomNavigationAction
               label="Friends"
               href="/friends"
-              icon={<PersonIcon />}
+              icon={<PeopleIcon />}
             />
             <BottomNavigationAction
               label="Notifications"

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import useUser from "../lib/useUser";
 import Layout from "../components/Layout";
-import fetchJson from "../lib/fetchJson";
 import { Button, TextField } from "@material-ui/core";
 import axios from "axios";
 

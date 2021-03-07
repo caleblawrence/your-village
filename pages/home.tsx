@@ -199,6 +199,7 @@ const Home = (): JSX.Element => {
             padding: 15,
             backgroundColor: "rgb(28 29 33)",
             marginTop: 20,
+            marginBottom: 100,
           }}
         >
           <h1 className="title">Your friends dates</h1>
