@@ -27,29 +27,42 @@ export default withSession(async (req, res, session) => {
 
   let userId = req.session.get("user").id;
 
-  let opportunityToDelete = await prisma.opportunity.findFirst({
+  let opportunity = await prisma.opportunity.findFirst({
     where: {
       id: +opportunityId,
     },
   });
 
-  if (opportunityToDelete === null) {
+  if (opportunity === null) {
     return res.status(404).json({
       error: true,
       errors: ["Opportunity not found"],
     });
   }
 
-  if (opportunityToDelete.requestedByUserId !== userId) {
-    return res.status(403).json({
+  if (opportunity.babysitterId !== null) {
+    return res.status(400).json({
       error: true,
-      errors: ["You cannot delete an date that is not yours"],
+      errors: ["This date already has a babysitter"],
     });
   }
 
-  const deletedOpportunity = await prisma.opportunity.delete({
-    where: { id: opportunityToDelete.id },
+  if (opportunity.requestedByUserId === userId) {
+    return res.status(400).json({
+      error: true,
+      errors: ["You can not volunteer for your own date"],
+    });
+  }
+
+  // TODO: validate that they are even allowed to volunteer for this (have to be a friend)
+  const updatedOpportunity = await prisma.opportunity.update({
+    where: {
+      id: opportunity.id,
+    },
+    data: {
+      babysitterId: userId,
+    },
   });
 
-  return res.send(deletedOpportunity);
+  return res.send(updatedOpportunity);
 });

@@ -38,7 +38,7 @@ export default withSession(async (req, res, session) => {
   if (friendRequest === null) {
     res
       .status(500)
-      .json({ error: true, message: "Friend request does not exist." });
+      .json({ error: true, errors: ["Friend request does not exist."] });
   }
 
   // TODO: how in the world do you cast to bool here????

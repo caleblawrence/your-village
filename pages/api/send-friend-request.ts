@@ -20,7 +20,7 @@ export default withSession(async (req, res, session) => {
   }
 
   if (req.session.get("user") === undefined) {
-    return res.status(403).json({ error: true, message: "restricted" });
+    return res.status(403).json({ error: true, errors: ["restricted"] });
   }
 
   let userId = req.session.get("user").id;
@@ -30,7 +30,7 @@ export default withSession(async (req, res, session) => {
   if (userId === requestedUserId) {
     return res
       .status(400)
-      .json({ error: true, message: "Cannot add yourself as a friend" });
+      .json({ error: true, erros: ["Cannot add yourself as a friend"] });
   }
 
   await prisma.userFriendRequests.create({

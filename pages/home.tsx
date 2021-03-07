@@ -75,8 +75,10 @@ const Home = (): JSX.Element => {
     setIsLoading(false);
   };
 
-  const handleVolunteer = (opportunityId: number) => {
-    // TODO: call api
+  const handleVolunteer = async (opportunityId: number) => {
+    await axios.post("/api/volunteer-for-opportunity", {
+      opportunityId,
+    });
   };
 
   const cancelOpportunity = async (opportunityId: number) => {
@@ -206,7 +208,7 @@ const Home = (): JSX.Element => {
               <Skeleton />
             </div>
           )}
-          {myRequestedTimes.length === 0 && !isLoadingOpportunities && (
+          {myOpportunities.length === 0 && !isLoadingOpportunities && (
             <p style={{ margin: 0, padding: 0, color: "rgb(204 204 204)" }}>
               You don't have any opportunities
             </p>

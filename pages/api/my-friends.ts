@@ -3,7 +3,7 @@ import withSession from "../../lib/session";
 
 export default withSession(async (req, res, session) => {
   if (req.session.get("user") === undefined) {
-    return res.status(403).json({ error: true, message: "restricted" });
+    return res.status(403).json({ error: true, errors: ["restricted"] });
   }
 
   let userId = req.session.get("user").id;
