@@ -6,7 +6,6 @@ import { Button, TextField } from "@material-ui/core";
 
 const Login = () => {
   const { mutateUser } = useUser({
-    redirectTo: "/profile",
     redirectIfFound: true,
   });
 

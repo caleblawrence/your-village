@@ -1,24 +1,30 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Head from "next/head";
 import Header from "./Header";
 import BottomNavigation from "@material-ui/core/BottomNavigation";
 import BottomNavigationAction from "@material-ui/core/BottomNavigationAction";
-import RestoreIcon from "@material-ui/icons/Restore";
-import FavoriteIcon from "@material-ui/icons/Favorite";
-import LocationOnIcon from "@material-ui/icons/LocationOn";
-import { makeStyles } from "@material-ui/core/styles";
 import HomeIcon from "@material-ui/icons/Home";
 import PersonIcon from "@material-ui/icons/Person";
-
-const useStyles = makeStyles({
-  root: {
-    width: 500,
-  },
-});
+import { useRouter } from "next/router";
+import SettingsIcon from "@material-ui/icons/Settings";
+import NotificationsIcon from "@material-ui/icons/Notifications";
 
 const Layout = ({ children }) => {
-  const classes = useStyles();
+  const router = useRouter();
   const [value, setValue] = React.useState(0);
+  useEffect(() => {
+    console.log("router.pathname", router.pathname);
+    if (router.pathname === "/home") {
+      setValue(0);
+    } else if (router.pathname === "/friends") {
+      setValue(1);
+    } else if (router.pathname === "/notifications") {
+      setValue(2);
+    } else if (router.pathname === "/settings") {
+      setValue(3);
+    }
+  }, []);
+
   return (
     <>
       <Head>
@@ -88,12 +94,17 @@ const Layout = ({ children }) => {
             <BottomNavigationAction
               label="Friends"
               href="/friends"
-              icon={<FavoriteIcon />}
+              icon={<PersonIcon />}
             />
             <BottomNavigationAction
-              label="Profile"
-              href="/profile"
-              icon={<PersonIcon />}
+              label="Notifications"
+              href="/notifications"
+              icon={<NotificationsIcon />}
+            />
+            <BottomNavigationAction
+              label="Settings"
+              href="/settings"
+              icon={<SettingsIcon />}
             />
           </BottomNavigation>
         </div>

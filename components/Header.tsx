@@ -53,9 +53,6 @@ const Header = () => {
               <Button style={{ color: "#f0ece2" }} href="/friends">
                 Friends
               </Button>
-              <Button style={{ color: "#f0ece2" }} href="/profile">
-                Profile
-              </Button>
               <Button
                 style={{ color: "#f0ece2" }}
                 href="/api/logout"
