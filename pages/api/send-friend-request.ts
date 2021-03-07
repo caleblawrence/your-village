@@ -41,5 +41,13 @@ export default withSession(async (req, res, session) => {
   });
   // TODO: send email telling the user they got a friend request
 
+  await prisma.notification.create({
+    data: {
+      message: "You have recieved a new friend request",
+      link: "/friends",
+      userId: +requestedUserId,
+    },
+  });
+
   res.status(200).json({ succes: true });
 });

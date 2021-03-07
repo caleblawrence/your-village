@@ -36,6 +36,31 @@ export default withSession(async (req, res, session) => {
         requestedByUserId: userId,
       },
     });
+
+    let rawFriendsData = await prisma.userFriend.findMany({
+      where: { userId: userId },
+      select: {
+        friend: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
+    });
+
+    // TODO: send email to all the users friends about this new opp
+    let userFriends = rawFriendsData.map((row) => row.friend);
+    userFriends.forEach(async (friend) => {
+      await prisma.notification.create({
+        data: {
+          message: "You have a new opportunity",
+          link: "/home",
+          userId: +friend.id,
+        },
+      });
+    });
     return res.send(newOpportunity);
   } catch (err) {
     if (err.code === "P2002") {
