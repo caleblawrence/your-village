@@ -1,7 +1,7 @@
 import withSession from "../../lib/session";
 
 export default withSession(async (req, res, session) => {
-  req.session = null;
+  req.session.user = null;
   await req.session.save();
 
   req.session.destroy();
