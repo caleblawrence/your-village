@@ -66,6 +66,13 @@ const Login = () => {
         {errors.map((error) => (
           <p>{error}</p>
         ))}
+
+        <p style={{ marginTop: 30 }}>
+          Dont have an account?{" "}
+          <a href="/signup" style={{ color: "#4b8ef5", fontWeight: 800 }}>
+            Sign Up
+          </a>
+        </p>
       </div>
       <style jsx>{`
         .login {
