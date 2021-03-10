@@ -10,8 +10,9 @@ import {
   Typography,
   Button,
   makeStyles,
+  Badge,
 } from "@material-ui/core";
-import MenuIcon from "@material-ui/icons/Menu";
+import NotificationsIcon from "@material-ui/icons/Notifications";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -53,6 +54,14 @@ const Header = () => {
               <Button style={{ color: "#f0ece2" }} href="/friends">
                 Friends
               </Button>
+              <IconButton
+                aria-label="show 17 new notifications"
+                style={{ color: "#f0ece2" }}
+              >
+                <Badge badgeContent={17} color="primary">
+                  <NotificationsIcon />
+                </Badge>
+              </IconButton>
               <Button
                 style={{ color: "#f0ece2" }}
                 href="/api/logout"

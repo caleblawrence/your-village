@@ -8,19 +8,20 @@ import { useRouter } from "next/router";
 import SettingsIcon from "@material-ui/icons/Settings";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import PeopleIcon from "@material-ui/icons/People";
+import { Badge, IconButton } from "@material-ui/core";
 
 const Layout = ({ children }) => {
   const router = useRouter();
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = React.useState("home");
   useEffect(() => {
     if (router.pathname === "/home") {
-      setValue(0);
+      setValue("home");
     } else if (router.pathname === "/friends") {
-      setValue(1);
+      setValue("friends");
     } else if (router.pathname === "/notifications") {
-      setValue(2);
+      setValue("notifications");
     } else if (router.pathname === "/settings") {
-      setValue(3);
+      setValue("settings");
     }
   }, []);
 
@@ -83,25 +84,41 @@ const Layout = ({ children }) => {
             onChange={(event, newValue) => {
               setValue(newValue);
             }}
-            showLabels
           >
             <BottomNavigationAction
               label="Home"
+              value="home"
               href="/home"
               icon={<HomeIcon />}
             />
             <BottomNavigationAction
               label="Friends"
+              value="friends"
               href="/friends"
               icon={<PeopleIcon />}
             />
             <BottomNavigationAction
               label="Notifications"
+              value="notifications"
               href="/notifications"
-              icon={<NotificationsIcon />}
+              icon={
+                <IconButton
+                  aria-label="show 17 new notifications"
+                  style={{
+                    color: "#f0ece2",
+                    marginBottom: 0,
+                    paddingBottom: 0,
+                  }}
+                >
+                  <Badge badgeContent={17} color="primary">
+                    <NotificationsIcon />
+                  </Badge>
+                </IconButton>
+              }
             />
             <BottomNavigationAction
               label="Settings"
+              value="settings"
               href="/settings"
               icon={<SettingsIcon />}
             />
