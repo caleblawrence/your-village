@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Divider } from "@material-ui/core";
 import axios from "axios";
 import { Notification } from "@prisma/client";
+import { Skeleton } from "@material-ui/lab";
 
 const Notifications = () => {
   let data = useUser({ redirectTo: "/login" });
@@ -28,6 +29,15 @@ const Notifications = () => {
   return (
     <Layout>
       <h1 style={{ margin: 0, padding: 0, marginBottom: 20 }}>Notifications</h1>
+      {isLoadingNotfications && (
+        <div style={{ width: 300 }}>
+          <Skeleton style={{ height: 50 }} />
+          <Skeleton style={{ height: 50 }} />
+          <Skeleton style={{ height: 50 }} />
+          <Skeleton style={{ height: 50 }} />
+          <Skeleton style={{ height: 50 }} />
+        </div>
+      )}
       {notifications.map((notification) => {
         return (
           <>

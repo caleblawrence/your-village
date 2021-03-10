@@ -148,9 +148,9 @@ const Home = (): JSX.Element => {
           <h1 className="title">My requested dates</h1>
           {isLoadingOpportunities && (
             <div style={{ width: 300 }}>
-              <Skeleton />
-              <Skeleton />
-              <Skeleton />
+              <Skeleton style={{ height: 50 }} />
+              <Skeleton style={{ height: 50 }} />
+              <Skeleton style={{ height: 50 }} />
             </div>
           )}
           {myRequestedTimes.length === 0 && !isLoadingOpportunities && (
@@ -205,9 +205,9 @@ const Home = (): JSX.Element => {
           <h1 className="title">Your friends dates</h1>
           {isLoadingOpportunities && (
             <div style={{ width: 300 }}>
-              <Skeleton />
-              <Skeleton />
-              <Skeleton />
+              <Skeleton style={{ height: 50 }} />
+              <Skeleton style={{ height: 50 }} />
+              <Skeleton style={{ height: 50 }} />
             </div>
           )}
           {myOpportunities.length === 0 && !isLoadingOpportunities && (
