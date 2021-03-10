@@ -1,6 +1,7 @@
 import prisma from "../../lib/prisma";
 import withSession from "../../lib/session";
 import * as yup from "yup";
+import { format } from "date-fns";
 
 let requestSchema = yup.object().shape({
   opportunityId: yup.number().positive().required(),
@@ -61,6 +62,19 @@ export default withSession(async (req, res, session) => {
     },
     data: {
       babysitterId: userId,
+    },
+  });
+
+  await prisma.notification.create({
+    data: {
+      message: `${
+        req.session.get("user").name
+      } has volunteered to babysit for you at ${format(
+        new Date(opportunity.date),
+        "LLL do, yyyy h:mmaaa"
+      )}`,
+      link: "/home",
+      userId: opportunity.requestedByUserId,
     },
   });
 

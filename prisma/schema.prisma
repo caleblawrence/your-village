@@ -68,6 +68,7 @@ model Notification {
   link      String?
   userId    Int?
   User      User?    @relation("notifications", fields: [userId], references: [id])
+  read      Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 }

@@ -33,7 +33,7 @@ const Friends = () => {
 
   async function getMyFriends() {
     setIsLoadingFriends(true);
-    const myFriendsResponse = await axios.get(`/api/my-friends`);
+    const myFriendsResponse = await axios.get(`/api/friends`);
     setMyFriends(myFriendsResponse.data.friends);
     setFriendRequests(myFriendsResponse.data.friendRequests);
     setIsLoadingFriends(false);
