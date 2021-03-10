@@ -39,6 +39,7 @@ const Layout = ({ children }) => {
   const [value, setValue] = React.useState("home");
   let userData = useUser({ redirectTo: "/login" });
   let user: IUser = userData.user;
+  let mutateUser = userData.mutateUser;
 
   const classes = useStyles();
 
