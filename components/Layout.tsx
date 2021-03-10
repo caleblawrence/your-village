@@ -1,18 +1,55 @@
 import React, { useEffect } from "react";
 import Head from "next/head";
-import Header from "./Header";
+import useUser from "../lib/useUser";
+import { IUser } from "../types/IUser";
 import BottomNavigation from "@material-ui/core/BottomNavigation";
 import BottomNavigationAction from "@material-ui/core/BottomNavigationAction";
 import HomeIcon from "@material-ui/icons/Home";
-import { useRouter } from "next/router";
 import SettingsIcon from "@material-ui/icons/Settings";
-import NotificationsIcon from "@material-ui/icons/Notifications";
 import PeopleIcon from "@material-ui/icons/People";
-import { Badge, IconButton } from "@material-ui/core";
+import fetcher from "../lib/fetcher";
+import useSWR from "swr";
+import { useRouter } from "next/router";
+import fetchJson from "../lib/fetchJson";
+import {
+  AppBar,
+  IconButton,
+  Typography,
+  Button,
+  Badge,
+  makeStyles,
+  Toolbar,
+} from "@material-ui/core";
+import NotificationsIcon from "@material-ui/icons/Notifications";
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    flexGrow: 1,
+  },
+  menuButton: {
+    marginRight: theme.spacing(2),
+  },
+  title: {
+    flexGrow: 1,
+  },
+}));
 
 const Layout = ({ children }) => {
   const router = useRouter();
   const [value, setValue] = React.useState("home");
+  let userData = useUser({ redirectTo: "/login" });
+  let user: IUser = userData.user;
+
+  const classes = useStyles();
+
+  const { data } = useSWR("/api/notifications", fetcher);
+  let numUnreadNotifications = undefined;
+  if (data) {
+    numUnreadNotifications = data.notifications.filter(
+      (notification) => notification.read === false
+    ).length;
+  }
+
   useEffect(() => {
     if (router.pathname === "/home") {
       setValue("home");
@@ -73,9 +110,60 @@ const Layout = ({ children }) => {
         @media only screen and (min-width: 768px) {
         }
       `}</style>
-      <Header />
 
       <main>
+        <div className="desktopNav">
+          <AppBar position="static" style={{ backgroundColor: "#69779b" }}>
+            <Toolbar>
+              <Typography variant="h6" className={classes.title}></Typography>
+              {!user?.isLoggedIn && (
+                <>
+                  <Button href="/login" style={{ color: "#f0ece2" }}>
+                    Login
+                  </Button>
+                  <Button style={{ color: "#f0ece2" }} href="/signup">
+                    Signup
+                  </Button>
+                </>
+              )}
+              {user?.isLoggedIn && (
+                <>
+                  <Button style={{ color: "#f0ece2" }} href="/home">
+                    Home
+                  </Button>
+                  <Button style={{ color: "#f0ece2" }} href="/friends">
+                    Friends
+                  </Button>
+                  <IconButton
+                    style={{ color: "#f0ece2" }}
+                    href="/notifications"
+                  >
+                    <Badge
+                      badgeContent={
+                        numUnreadNotifications !== undefined &&
+                        numUnreadNotifications.toString()
+                      }
+                      color="primary"
+                    >
+                      <NotificationsIcon />
+                    </Badge>
+                  </IconButton>
+                  <Button
+                    style={{ color: "#f0ece2" }}
+                    href="/api/logout"
+                    onClick={async (e) => {
+                      e.preventDefault();
+                      await mutateUser(fetchJson("/api/logout"));
+                      router.push("/login");
+                    }}
+                  >
+                    Logout
+                  </Button>
+                </>
+              )}
+            </Toolbar>
+          </AppBar>
+        </div>
         <div className="container">{children}</div>
         <div className="bottomNav">
           <BottomNavigation
@@ -103,14 +191,19 @@ const Layout = ({ children }) => {
               href="/notifications"
               icon={
                 <IconButton
-                  aria-label="show 17 new notifications"
                   style={{
                     color: "#f0ece2",
                     marginBottom: 0,
                     paddingBottom: 0,
                   }}
                 >
-                  <Badge badgeContent={17} color="primary">
+                  <Badge
+                    badgeContent={
+                      numUnreadNotifications !== undefined &&
+                      numUnreadNotifications.toString()
+                    }
+                    color="primary"
+                  >
                     <NotificationsIcon />
                   </Badge>
                 </IconButton>
