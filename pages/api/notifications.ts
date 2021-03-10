@@ -1,3 +1,4 @@
+import { TramRounded } from "@material-ui/icons";
 import prisma from "../../lib/prisma";
 import withSession from "../../lib/session";
 
@@ -8,11 +9,20 @@ export default withSession(async (req, res, session) => {
 
   let userId = req.session.get("user").id;
 
-  var notfications = await prisma.notification.findMany({
+  var notifications = await prisma.notification.findMany({
     where: {
       userId: +userId,
     },
   });
 
-  res.status(200).json({ notfications: notfications });
+  await prisma.notification.updateMany({
+    where: {
+      userId: +userId,
+    },
+    data: {
+      read: true,
+    },
+  });
+
+  res.status(200).json({ notifications: notifications });
 });

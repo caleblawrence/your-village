@@ -1,27 +1,38 @@
 import useUser from "../lib/useUser";
 import Layout from "../components/Layout";
 import { IUser } from "../types/IUser";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@material-ui/core";
+import axios from "axios";
+import { Notification } from "@prisma/client";
 
-const Settings = () => {
+const Notifications = () => {
   let data = useUser({ redirectTo: "/login" });
   let user: IUser = data.user;
-  let mutateUser = data.mutateUser;
+  const [isLoadingNotfications, setIsLoadingNotifications] = useState(false);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
 
-  if (!user || user.isLoggedIn === false) {
-    return <Layout>loading...</Layout>;
+  useEffect(() => {
+    if (user == null || user.id == undefined) return;
+    refreshNotificatonData();
+  }, [user]);
+
+  async function refreshNotificatonData() {
+    console.log("here");
+    setIsLoadingNotifications(true);
+    const notificationsResponse = await axios.get(`/api/notifications`);
+    setNotifications(notificationsResponse.data.notifications);
+    setIsLoadingNotifications(false);
   }
 
   return (
     <Layout>
       <h1 style={{ margin: 0, padding: 0, marginBottom: 20 }}>Notifications</h1>
-      <p>
-        Notifications is a work in progress. Go to the frinds page to view new
-        friends and go to the home page to view new opportunites.
-      </p>
+      {notifications.map((notification) => {
+        return <p>{notification.message}</p>;
+      })}
     </Layout>
   );
 };
 
-export default Settings;
+export default Notifications;
