@@ -2,7 +2,7 @@ import useUser from "../lib/useUser";
 import Layout from "../components/Layout";
 import { IUser } from "../types/IUser";
 import React, { useEffect, useState } from "react";
-import { Button } from "@material-ui/core";
+import { Button, Divider } from "@material-ui/core";
 import axios from "axios";
 import { Notification } from "@prisma/client";
 
@@ -29,7 +29,23 @@ const Notifications = () => {
     <Layout>
       <h1 style={{ margin: 0, padding: 0, marginBottom: 20 }}>Notifications</h1>
       {notifications.map((notification) => {
-        return <p>{notification.message}</p>;
+        return (
+          <>
+            <div
+              style={{
+                marginTop: 10,
+                backgroundColor: !notification.read && "#11292d",
+                padding: 10,
+              }}
+            >
+              <p style={{ margin: 0, padding: 0 }}>{notification.message}</p>
+              <Button color="primary" href={notification.link}>
+                View
+              </Button>
+            </div>
+            <Divider style={{ marginTop: 0, width: 320 }} />
+          </>
+        );
       })}
     </Layout>
   );
