@@ -43,7 +43,10 @@ const Layout = ({ children }) => {
 
   const classes = useStyles();
 
-  const { data } = useSWR("/api/notifications", fetcher);
+  const { data } = useSWR("/api/notifications", fetcher, {
+    focusThrottleInterval: 10000,
+    dedupingInterval: 10000,
+  });
   let numUnreadNotifications = undefined;
   if (data) {
     numUnreadNotifications = data.notifications.filter(
