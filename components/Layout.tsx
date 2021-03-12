@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
 const Layout = ({ children }) => {
   const router = useRouter();
   const [value, setValue] = React.useState("home");
-  let userData = useUser({ redirectTo: "/login" });
+  let userData = useUser({ redirectTo: "" });
   let user: IUser = userData.user;
   let mutateUser = userData.mutateUser;
 
@@ -48,7 +48,7 @@ const Layout = ({ children }) => {
     dedupingInterval: 10000,
   });
   let numUnreadNotifications = undefined;
-  if (data) {
+  if (data && data.notifications) {
     numUnreadNotifications = data.notifications.filter(
       (notification) => notification.read === false
     ).length;
