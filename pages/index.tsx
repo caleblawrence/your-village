@@ -14,7 +14,7 @@ const Home = () => {
   }
   return (
     <Layout>
-      <h1>Babysitter app</h1>
+      <h1>Your Village</h1>
       <p>Summary</p>
       <Button
         variant="contained"
