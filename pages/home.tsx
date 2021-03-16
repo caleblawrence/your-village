@@ -197,20 +197,23 @@ const Home = (): JSX.Element => {
             open={isRequestingATime}
           >
             <DialogContent dividers>
-              <div style={{ marginTop: 10 }}>
+              <div>
+                <h2 style={{ marginTop: 0, paddingTop: 0 }}>
+                  Enter a time you want free
+                </h2>
                 <DateTimePicker
                   label="Date/Time"
                   inputVariant="outlined"
                   value={selectedDate}
                   onChange={handleDateChange}
-                  style={{ width: 300, display: "block" }}
+                  style={{ maxWidth: 300, display: "block" }}
                   disablePast
                   fullWidth
                 />
                 <TextField
                   variant="outlined"
                   label="How many hours"
-                  style={{ marginTop: 20, width: 300, display: "block" }}
+                  style={{ marginTop: 20, maxWidth: 300, display: "block" }}
                   value={hours}
                   onChange={(e) => setHours(e.target.value)}
                   fullWidth
