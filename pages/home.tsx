@@ -145,7 +145,7 @@ const Home = (): JSX.Element => {
             marginTop: 20,
           }}
         >
-          <h1 className="title">My requested dates</h1>
+          <h1 className="title">Your times</h1>
           {isLoadingOpportunities && (
             <div style={{ width: 300 }}>
               <Skeleton style={{ height: 50 }} />
@@ -162,8 +162,7 @@ const Home = (): JSX.Element => {
             return (
               <div key={time.id} style={{ marginTop: 10 }}>
                 <p className="dateTitle">
-                  {format(new Date(time.date), "LLL do, yyyy h:mmaaa")} for{" "}
-                  {time.hours} hours
+                  {format(new Date(time.date), "LLL do h:mmaaa")}
                 </p>
                 {time.babySitter !== null && (
                   <p style={{ margin: 0, padding: 0 }}>
@@ -176,13 +175,13 @@ const Home = (): JSX.Element => {
                   </p>
                 )}
                 <Button
-                  variant="contained"
+                  variant="text"
                   size="small"
-                  onClick={(e) => cancelOpportunity(time.id)}
+                  onClick={() => cancelOpportunity(time.id)}
                   style={{
                     marginBottom: 0,
                     marginTop: 5,
-                    backgroundColor: "#cc8d8d",
+                    color: "rgb(255 102 102)",
                   }}
                 >
                   Cancel
@@ -202,7 +201,7 @@ const Home = (): JSX.Element => {
             marginBottom: 100,
           }}
         >
-          <h1 className="title">Your friends dates</h1>
+          <h1 className="title">Your friends times</h1>
           {isLoadingOpportunities && (
             <div style={{ width: 300 }}>
               <Skeleton style={{ height: 50 }} />
@@ -225,8 +224,7 @@ const Home = (): JSX.Element => {
                       : "dateTitle"
                   }
                 >
-                  {format(new Date(opportunity.date), "LLL do, yyyy h:mmaaa")}{" "}
-                  for {opportunity.hours} hours
+                  {format(new Date(opportunity.date), "LLL do h:mmaaa")}
                 </p>
                 <p style={{ margin: 0, padding: 0, marginTop: 2 }}>
                   Requested by{" "}
