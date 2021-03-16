@@ -1,9 +1,9 @@
+import * as React from "react";
 import useUser from "../lib/useUser";
 import Layout from "../components/Layout";
 import { IUser } from "../types/IUser";
 import { Button, Paper, Snackbar } from "@material-ui/core";
 import { useEffect, useState } from "react";
-import * as React from "react";
 import TextField from "@material-ui/core/TextField";
 import { DateTimePicker } from "@material-ui/pickers";
 import { MuiPickersUtilsProvider } from "@material-ui/pickers";
@@ -13,27 +13,19 @@ import { Alert, Skeleton } from "@material-ui/lab";
 import { Opportunity, User } from "@prisma/client";
 import { format } from "date-fns";
 import Divider from "@material-ui/core/Divider";
-import {
-  createStyles,
-  Theme,
-  withStyles,
-  WithStyles,
-} from "@material-ui/core/styles";
+import { Theme, withStyles } from "@material-ui/core/styles";
 import Dialog from "@material-ui/core/Dialog";
-import MuiDialogTitle from "@material-ui/core/DialogTitle";
 import MuiDialogContent from "@material-ui/core/DialogContent";
-import MuiDialogActions from "@material-ui/core/DialogActions";
-import IconButton from "@material-ui/core/IconButton";
-import CloseIcon from "@material-ui/icons/Close";
-import Typography from "@material-ui/core/Typography";
 
 const Home = (): JSX.Element => {
   let data = useUser({ redirectTo: "/login" });
   let user: IUser = data.user;
   const [selectedDate, handleDateChange] = useState<Date | null>(null);
   const [hours, setHours] = useState<Number | string>("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [open, setOpen] = useState(false);
+  const [
+    isOpportunityCreatedMessageOpen,
+    setIsOpportunityCreatedMessageOpen,
+  ] = useState(false);
   const [isLoadingOpportunities, setIsLoadingOpportunities] = useState(false);
   const [isRequestingATime, setIsRequestingATime] = useState(false);
   const [myRequestedTimes, setMyRequestedTimes] = useState<
@@ -65,7 +57,7 @@ const Home = (): JSX.Element => {
     if (reason === "clickaway") {
       return;
     }
-    setOpen(false);
+    setIsOpportunityCreatedMessageOpen(false);
   };
 
   if (!user || user.isLoggedIn === false) {
@@ -73,20 +65,19 @@ const Home = (): JSX.Element => {
   }
 
   const handleSubmit = async () => {
+    setIsRequestingATime(false);
     try {
-      setIsLoading(true);
       await axios.post("/api/new-opportunity", {
         date: selectedDate,
         hours: hours,
       });
-      setOpen(true);
+      setIsOpportunityCreatedMessageOpen(true);
       setHours("");
       handleDateChange(null);
       refreshOpportunityData();
     } catch (error) {
       console.log("error adding opportunity:", error);
     }
-    setIsLoading(false);
   };
 
   const handleVolunteer = async (opportunityId: number) => {
@@ -191,6 +182,16 @@ const Home = (): JSX.Element => {
           <Button variant="outlined" onClick={() => setIsRequestingATime(true)}>
             Request a time
           </Button>
+          <Snackbar
+            open={isOpportunityCreatedMessageOpen}
+            autoHideDuration={6000}
+            onClose={handleClose}
+          >
+            <Alert onClose={handleClose} severity="success">
+              Oppertunity created! You will recieve an email when/if someone
+              says they can babysit for you.
+            </Alert>
+          </Snackbar>
           <Dialog
             onClose={() => setIsRequestingATime(false)}
             aria-labelledby="customized-dialog-title"
@@ -224,21 +225,10 @@ const Home = (): JSX.Element => {
                   onClick={handleSubmit}
                   size="medium"
                   style={{ marginTop: 10, display: "block" }}
-                  disabled={hours === null || selectedDate == null || isLoading}
+                  disabled={hours === null || selectedDate == null}
                 >
-                  {isLoading ? "Loading..." : "Submit"}
+                  Submit
                 </Button>
-
-                <Snackbar
-                  open={open}
-                  autoHideDuration={6000}
-                  onClose={handleClose}
-                >
-                  <Alert onClose={handleClose} severity="success">
-                    Oppertunity created! You will recieve an email when/if
-                    someone says they can babysit for you.
-                  </Alert>
-                </Snackbar>
               </div>
             </DialogContent>
           </Dialog>
