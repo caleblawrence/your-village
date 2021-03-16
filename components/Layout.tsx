@@ -11,28 +11,32 @@ import fetcher from "../lib/fetcher";
 import useSWR from "swr";
 import { useRouter } from "next/router";
 import fetchJson from "../lib/fetchJson";
-import {
-  AppBar,
-  IconButton,
-  Typography,
-  Button,
-  Badge,
-  makeStyles,
-  Toolbar,
-} from "@material-ui/core";
+import { AppBar, Button, makeStyles } from "@material-ui/core";
 import NotificationsIcon from "@material-ui/icons/Notifications";
+import Toolbar from "@material-ui/core/Toolbar";
+import IconButton from "@material-ui/core/IconButton";
+import Typography from "@material-ui/core/Typography";
+import InputBase from "@material-ui/core/InputBase";
+import Badge from "@material-ui/core/Badge";
+import MenuItem from "@material-ui/core/MenuItem";
+import Menu from "@material-ui/core/Menu";
+import MenuIcon from "@material-ui/icons/Menu";
+import SearchIcon from "@material-ui/icons/Search";
+import AccountCircle from "@material-ui/icons/AccountCircle";
+import MailIcon from "@material-ui/icons/Mail";
+import MoreIcon from "@material-ui/icons/MoreVert";
+import { fade, Theme, createStyles } from "@material-ui/core/styles";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-  },
-  menuButton: {
-    marginRight: theme.spacing(2),
-  },
-  title: {
-    flexGrow: 1,
-  },
-}));
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    title: {
+      flexGrow: 1,
+    },
+    menuButton: {
+      marginRight: theme.spacing(2),
+    },
+  })
+);
 
 const Layout = ({ children }) => {
   const router = useRouter();
@@ -66,11 +70,22 @@ const Layout = ({ children }) => {
     }
   }, []);
 
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
     <>
       <Head>
-        <title>Babysitter App</title>
+        <title>Your Village</title>
       </Head>
+
       <style jsx global>{`
         *,
         *::before,
@@ -116,7 +131,7 @@ const Layout = ({ children }) => {
       `}</style>
 
       <main>
-        <div className="desktopNav">
+        <div className="desktopNav grow">
           <AppBar position="static" style={{ backgroundColor: "#69779b" }}>
             <Toolbar>
               <Typography variant="h6" className={classes.title}></Typography>
@@ -152,22 +167,55 @@ const Layout = ({ children }) => {
                       <NotificationsIcon />
                     </Badge>
                   </IconButton>
-                  <Button
-                    style={{ color: "#f0ece2" }}
-                    href="/api/logout"
-                    onClick={async (e) => {
-                      e.preventDefault();
-                      await mutateUser(fetchJson("/api/logout"));
-                      router.push("/login");
-                    }}
-                  >
-                    Logout
-                  </Button>
+                  <div>
+                    <IconButton
+                      aria-label="account of current user"
+                      aria-controls="menu-appbar"
+                      aria-haspopup="true"
+                      onClick={handleMenu}
+                      style={{ color: "#f0ece2" }}
+                    >
+                      <AccountCircle />
+                    </IconButton>
+                    <Menu
+                      id="menu-appbar"
+                      anchorEl={anchorEl}
+                      anchorOrigin={{
+                        vertical: "top",
+                        horizontal: "right",
+                      }}
+                      keepMounted
+                      transformOrigin={{
+                        vertical: "top",
+                        horizontal: "right",
+                      }}
+                      open={open}
+                      onClose={handleClose}
+                    >
+                      <MenuItem
+                        onClick={async (e) => {
+                          router.push("/settings");
+                        }}
+                      >
+                        Settings
+                      </MenuItem>
+                      <MenuItem
+                        onClick={async (e) => {
+                          e.preventDefault();
+                          await mutateUser(fetchJson("/api/logout"));
+                          router.push("/login");
+                        }}
+                      >
+                        Logout
+                      </MenuItem>
+                    </Menu>
+                  </div>
                 </>
               )}
             </Toolbar>
           </AppBar>
         </div>
+
         <div className="container">{children}</div>
         <div className="bottomNav">
           <BottomNavigation

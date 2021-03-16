@@ -15,6 +15,7 @@ const Home = () => {
   return (
     <Layout>
       <h1>Your Village</h1>
+      <h3>"It takes a village to raise a child"</h3>
       <p>Summary</p>
       <Button
         variant="contained"
