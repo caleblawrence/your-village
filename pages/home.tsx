@@ -13,6 +13,19 @@ import { Alert, Skeleton } from "@material-ui/lab";
 import { Opportunity, User } from "@prisma/client";
 import { format } from "date-fns";
 import Divider from "@material-ui/core/Divider";
+import {
+  createStyles,
+  Theme,
+  withStyles,
+  WithStyles,
+} from "@material-ui/core/styles";
+import Dialog from "@material-ui/core/Dialog";
+import MuiDialogTitle from "@material-ui/core/DialogTitle";
+import MuiDialogContent from "@material-ui/core/DialogContent";
+import MuiDialogActions from "@material-ui/core/DialogActions";
+import IconButton from "@material-ui/core/IconButton";
+import CloseIcon from "@material-ui/icons/Close";
+import Typography from "@material-ui/core/Typography";
 
 const Home = (): JSX.Element => {
   let data = useUser({ redirectTo: "/login" });
@@ -22,6 +35,7 @@ const Home = (): JSX.Element => {
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [isLoadingOpportunities, setIsLoadingOpportunities] = useState(false);
+  const [isRequestingATime, setIsRequestingATime] = useState(false);
   const [myRequestedTimes, setMyRequestedTimes] = useState<
     (Opportunity & {
       babySitter: User;
@@ -100,107 +114,6 @@ const Home = (): JSX.Element => {
             marginTop: 20,
           }}
         >
-          <h1 className="title">Enter a date you need free</h1>
-          <DateTimePicker
-            label="Date/Time"
-            inputVariant="outlined"
-            value={selectedDate}
-            onChange={handleDateChange}
-            style={{ width: 300, display: "block" }}
-            disablePast
-            fullWidth
-          />
-          <TextField
-            variant="outlined"
-            label="How many hours"
-            style={{ marginTop: 20, width: 300, display: "block" }}
-            value={hours}
-            onChange={(e) => setHours(e.target.value)}
-            fullWidth
-          ></TextField>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleSubmit}
-            size="medium"
-            style={{ marginTop: 10, display: "block" }}
-            disabled={hours === null || selectedDate == null || isLoading}
-          >
-            {isLoading ? "Loading..." : "Submit"}
-          </Button>
-
-          <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-            <Alert onClose={handleClose} severity="success">
-              Oppertunity created! You will recieve an email when/if someone
-              says they can babysit for you.
-            </Alert>
-          </Snackbar>
-        </Paper>
-
-        <Paper
-          elevation={3}
-          style={{
-            padding: 15,
-            backgroundColor: "rgb(28 29 33)",
-            marginTop: 20,
-          }}
-        >
-          <h1 className="title">Your times</h1>
-          {isLoadingOpportunities && (
-            <div style={{ width: 300 }}>
-              <Skeleton style={{ height: 50 }} />
-              <Skeleton style={{ height: 50 }} />
-              <Skeleton style={{ height: 50 }} />
-            </div>
-          )}
-          {myRequestedTimes.length === 0 && !isLoadingOpportunities && (
-            <p style={{ margin: 0, padding: 0, color: "rgb(204 204 204)" }}>
-              You don't have any requested dates
-            </p>
-          )}
-          {myRequestedTimes.map((time) => {
-            return (
-              <div key={time.id} style={{ marginTop: 10 }}>
-                <p className="dateTitle">
-                  {format(new Date(time.date), "LLL do h:mmaaa")}
-                </p>
-                {time.babySitter !== null && (
-                  <p style={{ margin: 0, padding: 0 }}>
-                    {time.babySitter.name} is babysitting.
-                  </p>
-                )}
-                {time.babySitter === null && (
-                  <p style={{ margin: 0, padding: 0 }}>
-                    No one has volunteered for this yet.
-                  </p>
-                )}
-                <Button
-                  variant="text"
-                  size="small"
-                  onClick={() => cancelOpportunity(time.id)}
-                  style={{
-                    marginBottom: 0,
-                    marginTop: 5,
-                    color: "rgb(255 102 102)",
-                  }}
-                >
-                  Cancel
-                </Button>
-                <Divider style={{ marginTop: 10, width: 320 }} />
-              </div>
-            );
-          })}
-        </Paper>
-
-        <Paper
-          elevation={3}
-          style={{
-            padding: 15,
-            backgroundColor: "rgb(28 29 33)",
-            marginTop: 20,
-            marginBottom: 100,
-          }}
-        >
           <h1 className="title">Your friends times</h1>
           {isLoadingOpportunities && (
             <div style={{ width: 300 }}>
@@ -247,13 +160,13 @@ const Home = (): JSX.Element => {
                 )}
                 {opportunity.babySitter === null && (
                   <Button
-                    color="primary"
-                    variant="contained"
+                    variant="text"
                     size="small"
                     onClick={(e) => handleVolunteer(opportunity.id)}
                     style={{
                       marginBottom: 0,
                       marginTop: 5,
+                      color: "#8cebf3",
                     }}
                   >
                     Volunteer
@@ -264,10 +177,117 @@ const Home = (): JSX.Element => {
             );
           })}
         </Paper>
+
+        <Paper
+          elevation={3}
+          style={{
+            padding: 15,
+            backgroundColor: "rgb(28 29 33)",
+            marginTop: 20,
+            marginBottom: 100,
+          }}
+        >
+          <h1 className="title">Your times</h1>
+          <Button variant="outlined" onClick={() => setIsRequestingATime(true)}>
+            Request a time
+          </Button>
+          <Dialog
+            onClose={() => setIsRequestingATime(false)}
+            aria-labelledby="customized-dialog-title"
+            open={isRequestingATime}
+          >
+            <DialogContent dividers>
+              <div style={{ marginTop: 10 }}>
+                <DateTimePicker
+                  label="Date/Time"
+                  inputVariant="outlined"
+                  value={selectedDate}
+                  onChange={handleDateChange}
+                  style={{ width: 300, display: "block" }}
+                  disablePast
+                  fullWidth
+                />
+                <TextField
+                  variant="outlined"
+                  label="How many hours"
+                  style={{ marginTop: 20, width: 300, display: "block" }}
+                  value={hours}
+                  onChange={(e) => setHours(e.target.value)}
+                  fullWidth
+                ></TextField>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleSubmit}
+                  size="medium"
+                  style={{ marginTop: 10, display: "block" }}
+                  disabled={hours === null || selectedDate == null || isLoading}
+                >
+                  {isLoading ? "Loading..." : "Submit"}
+                </Button>
+
+                <Snackbar
+                  open={open}
+                  autoHideDuration={6000}
+                  onClose={handleClose}
+                >
+                  <Alert onClose={handleClose} severity="success">
+                    Oppertunity created! You will recieve an email when/if
+                    someone says they can babysit for you.
+                  </Alert>
+                </Snackbar>
+              </div>
+            </DialogContent>
+          </Dialog>
+
+          {isLoadingOpportunities && (
+            <div style={{ width: 300 }}>
+              <Skeleton style={{ height: 50 }} />
+              <Skeleton style={{ height: 50 }} />
+              <Skeleton style={{ height: 50 }} />
+            </div>
+          )}
+          {myRequestedTimes.length === 0 && !isLoadingOpportunities && (
+            <p style={{ margin: 0, padding: 0, color: "rgb(204 204 204)" }}>
+              You don't have any requested dates
+            </p>
+          )}
+          {myRequestedTimes.map((time) => {
+            return (
+              <div key={time.id} style={{ marginTop: 10 }}>
+                <p className="dateTitle">
+                  {format(new Date(time.date), "LLL do h:mmaaa")}
+                </p>
+                {time.babySitter !== null && (
+                  <p style={{ margin: 0, padding: 0 }}>
+                    {time.babySitter.name} is babysitting.
+                  </p>
+                )}
+                {time.babySitter === null && (
+                  <p style={{ margin: 0, padding: 0 }}>
+                    No one has volunteered for this yet.
+                  </p>
+                )}
+                <Button
+                  variant="text"
+                  size="small"
+                  onClick={() => cancelOpportunity(time.id)}
+                  style={{
+                    marginBottom: 0,
+                    marginTop: 5,
+                    color: "rgb(255 102 102)",
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Divider style={{ marginTop: 10, width: 320 }} />
+              </div>
+            );
+          })}
+        </Paper>
       </Layout>
       <style jsx>{`
         .userIsBabysitting {
-          color: #8cebf3;
           font-weight: 900;
         }
         .title {
@@ -291,5 +311,11 @@ const Home = (): JSX.Element => {
     </MuiPickersUtilsProvider>
   );
 };
+
+const DialogContent = withStyles((theme: Theme) => ({
+  root: {
+    padding: theme.spacing(2),
+  },
+}))(MuiDialogContent);
 
 export default Home;
