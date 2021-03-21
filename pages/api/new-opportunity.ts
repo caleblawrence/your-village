@@ -1,6 +1,8 @@
 import prisma from "../../lib/prisma";
 import withSession from "../../lib/session";
 import * as yup from "yup";
+import { sendEmail, Email } from "../../lib/email";
+import { format } from "date-fns";
 
 let requestSchema = yup.object().shape({
   date: yup.date().required(),
@@ -50,9 +52,25 @@ export default withSession(async (req, res, session) => {
       },
     });
 
-    // TODO: send email to all the users friends about this new opp
     let userFriends = rawFriendsData.map((row) => row.friend);
     userFriends.forEach(async (friend) => {
+      const msg: Email = {
+        to:
+          process.env.NODE_ENV === "production"
+            ? friend.email
+            : "lawrence.calebc@gmail.com",
+        from: "lawrence.calebc@gmail.com",
+        subject: `${req.session.get("user").name} added a date for ${format(
+          new Date(date),
+          "LLL do, yyyy h:mmaaa"
+        )}`,
+        html:
+          process.env.NODE_ENV === "production"
+            ? "Click <a href='https://your-village.vercel.app/home'>here</a> to sign up"
+            : "Click <a href='https://localhost:3000/home'>here</a> to sign up",
+      };
+      await sendEmail(msg);
+
       await prisma.notification.create({
         data: {
           message: "You have a new opportunity",

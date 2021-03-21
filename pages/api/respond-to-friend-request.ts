@@ -41,7 +41,6 @@ export default withSession(async (req, res, session) => {
       .json({ error: true, errors: ["Friend request does not exist."] });
   }
 
-  // TODO: how in the world do you cast to bool here????
   if (accepted == "true" || accepted == true) {
     await prisma.userFriend.create({
       data: {
