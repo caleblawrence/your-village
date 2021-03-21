@@ -21,7 +21,8 @@ const Home = (): JSX.Element => {
   let data = useUser({ redirectTo: "/login" });
   let user: IUser = data.user;
   const [selectedDate, handleDateChange] = useState<Date | null>(null);
-  const [hours, setHours] = useState<Number | string>("");
+  const [notes, setNotes] = useState<string>("");
+
   const [
     isOpportunityCreatedMessageOpen,
     setIsOpportunityCreatedMessageOpen,
@@ -69,10 +70,10 @@ const Home = (): JSX.Element => {
     try {
       await axios.post("/api/new-opportunity", {
         date: selectedDate,
-        hours: hours,
+        notes: notes,
       });
       setIsOpportunityCreatedMessageOpen(true);
-      setHours("");
+      setNotes("");
       handleDateChange(null);
       refreshOpportunityData();
     } catch (error) {
@@ -179,7 +180,11 @@ const Home = (): JSX.Element => {
           }}
         >
           <h1 className="title">Your times</h1>
-          <Button variant="outlined" onClick={() => setIsRequestingATime(true)}>
+          <Button
+            variant="outlined"
+            style={{ marginBottom: 10 }}
+            onClick={() => setIsRequestingATime(true)}
+          >
             Request a time
           </Button>
           <Snackbar
@@ -213,10 +218,10 @@ const Home = (): JSX.Element => {
                 />
                 <TextField
                   variant="outlined"
-                  label="How many hours"
+                  label="Notes/Comments"
                   style={{ marginTop: 20, maxWidth: 300, display: "block" }}
-                  value={hours}
-                  onChange={(e) => setHours(e.target.value)}
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
                   fullWidth
                 ></TextField>
                 <Button
@@ -225,7 +230,7 @@ const Home = (): JSX.Element => {
                   onClick={handleSubmit}
                   size="medium"
                   style={{ marginTop: 10, display: "block" }}
-                  disabled={hours === null || selectedDate == null}
+                  disabled={selectedDate == null}
                 >
                   Submit
                 </Button>
@@ -251,13 +256,28 @@ const Home = (): JSX.Element => {
                 <p className="dateTitle">
                   {format(new Date(time.date), "LLL do h:mmaaa")}
                 </p>
+                {time.notes !== null && (
+                  <p style={{ margin: 0, padding: 0 }}>{time.notes}</p>
+                )}
                 {time.babySitter !== null && (
-                  <p style={{ margin: 0, padding: 0 }}>
+                  <p
+                    style={{
+                      margin: 0,
+                      padding: 0,
+                      color: "rgb(204, 204, 204)",
+                    }}
+                  >
                     {time.babySitter.name} is babysitting.
                   </p>
                 )}
                 {time.babySitter === null && (
-                  <p style={{ margin: 0, padding: 0 }}>
+                  <p
+                    style={{
+                      margin: 0,
+                      padding: 0,
+                      color: "rgb(204, 204, 204)",
+                    }}
+                  >
                     No one has volunteered for this yet.
                   </p>
                 )}

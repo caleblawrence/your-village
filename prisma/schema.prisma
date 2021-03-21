@@ -51,7 +51,7 @@ model UserFriendRequests {
 model Opportunity {
   id                Int      @id @default(autoincrement())
   date              DateTime
-  hours             Int
+  notes             String?
   requestedByUserId Int
   requestedByUser   User     @relation("requestedByUser", fields: [requestedByUserId], references: [id])
   babysitterId      Int?

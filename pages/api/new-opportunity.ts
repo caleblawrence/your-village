@@ -6,7 +6,7 @@ import { format } from "date-fns";
 
 let requestSchema = yup.object().shape({
   date: yup.date().required(),
-  hours: yup.number().positive().required(),
+  notes: yup.string(),
 });
 
 export default withSession(async (req, res, session) => {
@@ -22,7 +22,7 @@ export default withSession(async (req, res, session) => {
     return res.status(400).json({ error: true, errors: err.errors });
   }
 
-  const { date, hours } = req.body;
+  const { date, notes } = req.body;
 
   if (req.session.get("user") === undefined) {
     return res.status(403).json({ error: true, message: "restricted" });
@@ -34,7 +34,7 @@ export default withSession(async (req, res, session) => {
     let newOpportunity = await prisma.opportunity.create({
       data: {
         date: new Date(date),
-        hours: +hours,
+        notes: notes,
         requestedByUserId: userId,
       },
     });
