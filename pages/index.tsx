@@ -3,6 +3,7 @@ import useUser from "../lib/useUser";
 import { IUser } from "../types/IUser";
 import { useRouter } from "next/router";
 import { Button, TextField } from "@material-ui/core";
+import Image from "next/image";
 
 const Home = () => {
   const router = useRouter();
@@ -16,16 +17,23 @@ const Home = () => {
     <Layout>
       <h1>Your Village</h1>
       <h3>"It takes a village to raise a child"</h3>
-      <p>Summary</p>
-      <Button
-        variant="contained"
-        color="primary"
-        size="medium"
-        style={{ marginTop: 10 }}
-        href="/login"
-      >
-        Login
-      </Button>
+      <div>
+        <Image
+          src="/manageTimes.png"
+          alt="Picture of the author"
+          width={800}
+          height={400}
+        />
+      </div>
+      <div>
+        <Image
+          src="/friends.png"
+          alt="Picture of the author"
+          width={800}
+          height={400}
+        />
+      </div>
+
       <Button
         variant="contained"
         color="primary"
@@ -33,7 +41,7 @@ const Home = () => {
         style={{ marginTop: 10 }}
         href="/signup"
       >
-        Sign up
+        Create an account
       </Button>
     </Layout>
   );

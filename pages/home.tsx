@@ -131,10 +131,20 @@ const Home = (): JSX.Element => {
                 >
                   {format(new Date(opportunity.date), "LLL do h:mmaaa")}
                 </p>
-                <p style={{ margin: 0, padding: 0, marginTop: 2 }}>
+                <p
+                  style={{
+                    margin: 0,
+                    padding: 0,
+                    marginTop: 2,
+                    color: "rgb(204 204 204)",
+                  }}
+                >
                   Requested by{" "}
                   <strong>{opportunity.requestedByUser.name}</strong>
                 </p>
+                {opportunity.notes !== null && (
+                  <p style={{ margin: 0, padding: 0 }}>{opportunity.notes}</p>
+                )}
                 {opportunity.babySitter !== null && (
                   <p style={{ margin: 0, padding: 0, marginTop: 2 }}>
                     {opportunity.babysitterId == user.id ? (
