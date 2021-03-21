@@ -32,6 +32,7 @@ export default withSession(async (req, res, session) => {
   });
 
   let friendIds = rawFriendData.map((row) => row.friend.id);
+  // TODO: only get future opportunites here
   let opportunities = await prisma.opportunity.findMany({
     include: {
       requestedByUser: true,

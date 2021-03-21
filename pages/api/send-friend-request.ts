@@ -1,6 +1,7 @@
 import prisma from "../../lib/prisma";
 import withSession from "../../lib/session";
 import * as yup from "yup";
+import { sendEmail, Email } from "../../lib/email";
 
 let requestSchema = yup.object().shape({
   requestedUserId: yup.number().required(),
@@ -39,7 +40,26 @@ export default withSession(async (req, res, session) => {
       sentByUserId: +userId,
     },
   });
-  // TODO: send email telling the user they got a friend request
+
+  var friend = await prisma.user.findFirst({
+    where: {
+      id: +requestedUserId,
+    },
+  });
+
+  const msg: Email = {
+    to:
+      process.env.NODE_ENV === "production"
+        ? friend.email
+        : "lawrence.calebc@gmail.com",
+    from: "lawrence.calebc@gmail.com",
+    subject: "You have recieved a new friend request",
+    html:
+      process.env.NODE_ENV === "production"
+        ? "Click <a href='https://your-village.vercel.app/friends'>here</a> to response"
+        : "Click <a href='http://localhost:3000/friends'>here</a> to respond",
+  };
+  await sendEmail(msg);
 
   await prisma.notification.create({
     data: {
