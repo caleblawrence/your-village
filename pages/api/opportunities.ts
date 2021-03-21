@@ -1,3 +1,4 @@
+import { date } from "yup/lib/locale";
 import prisma from "../../lib/prisma";
 import withSession from "../../lib/session";
 
@@ -32,7 +33,6 @@ export default withSession(async (req, res, session) => {
   });
 
   let friendIds = rawFriendData.map((row) => row.friend.id);
-  // TODO: only get future opportunites here
   let opportunities = await prisma.opportunity.findMany({
     include: {
       requestedByUser: true,
@@ -43,6 +43,9 @@ export default withSession(async (req, res, session) => {
         requestedByUserId: userId,
       },
       requestedByUserId: { in: friendIds },
+      date: {
+        gte: new Date(),
+      },
     },
     orderBy: {
       babysitterId: "desc",
