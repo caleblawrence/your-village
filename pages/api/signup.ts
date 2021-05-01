@@ -22,7 +22,12 @@ export default withSession(async (req: any, res: NextApiResponse) => {
   try {
     await requestSchema.validate(req.body);
   } catch (err) {
-    return res.status(400).json({ error: true, errors: err.errors });
+    // capitalize first letter of error message
+    let errors = err.errors.map(
+      (error) => error.charAt(0).toUpperCase() + error.slice(1)
+    );
+
+    return res.status(400).json({ error: true, errors: errors });
   }
   const { name, email, password } = await req.body;
 
@@ -33,7 +38,7 @@ export default withSession(async (req: any, res: NextApiResponse) => {
   });
 
   if (usersWithEmail > 0) {
-    res.status(400).json({ error: true, errors: ["Email already exists."] });
+    res.status(400).json({ error: true, errors: ["Email already exists"] });
   }
 
   try {

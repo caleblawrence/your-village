@@ -3,6 +3,7 @@ import useUser from "../lib/useUser";
 import Layout from "../components/Layout";
 import { Button, TextField } from "@material-ui/core";
 import axios from "axios";
+import { Alert } from "@material-ui/lab";
 
 const Signup = () => {
   const { mutateUser } = useUser({
@@ -32,59 +33,67 @@ const Signup = () => {
 
   return (
     <Layout>
-      <div className="signup">
-        <TextField
-          label="Full name"
-          variant="outlined"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          fullWidth
-          style={{ marginBottom: 20 }}
-        />
-        <TextField
-          label="Email"
-          variant="outlined"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          fullWidth
-          style={{ marginBottom: 20 }}
-        />
-        <TextField
-          label="Password"
-          variant="outlined"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          fullWidth
-          type="password"
-          autoComplete="current-password"
-        />
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <div className="signup" style={{ maxWidth: 500 }}>
+          {errors.map((error) => (
+            <Alert
+              severity="error"
+              icon={false}
+              style={{
+                marginBottom: 20,
+                backgroundColor: "rgb(53 8 0)",
+                color: "rgb(255 215 212)",
+              }}
+            >
+              {error}
+            </Alert>
+          ))}
 
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleSignup}
-          size="large"
-          style={{ marginTop: 10, display: "block" }}
-          disabled={email === "" || password === "" || name === ""}
-        >
-          Sign Up
-        </Button>
+          <TextField
+            label="Full name"
+            variant="outlined"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            fullWidth
+            style={{ marginBottom: 20 }}
+          />
+          <TextField
+            label="Email"
+            variant="outlined"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            fullWidth
+            style={{ marginBottom: 20 }}
+          />
+          <TextField
+            label="Password"
+            variant="outlined"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            fullWidth
+            type="password"
+            autoComplete="current-password"
+          />
 
-        {errors.map((error) => (
-          <p>{error}</p>
-        ))}
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSignup}
+            size="large"
+            style={{ marginTop: 10, display: "block" }}
+            disabled={email === "" || password === "" || name === ""}
+          >
+            Sign Up
+          </Button>
 
-        <p style={{ marginTop: 30 }}>
-          Already have an account?{" "}
-          <a href="/login" style={{ color: "#4b8ef5", fontWeight: 800 }}>
-            Login
-          </a>
-        </p>
+          <p style={{ marginTop: 30 }}>
+            Already have an account?{" "}
+            <a href="/login" style={{ color: "#4b8ef5", fontWeight: 800 }}>
+              Login
+            </a>
+          </p>
+        </div>
       </div>
-      <style jsx>{`
-        .login {
-        }
-      `}</style>
     </Layout>
   );
 };
