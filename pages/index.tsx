@@ -16,7 +16,10 @@ const Home = () => {
   }
   return (
     <Layout>
-      <h1>The home for managing your babysitting times</h1>
+      <h1>
+        The home for managing your babysitting times and volunteering to help
+        your friends
+      </h1>
       <p>
         You can add family and friends and they will be notified whenever you
         need someone to babysit and this app will take care of managing who
