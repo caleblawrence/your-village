@@ -6,6 +6,7 @@ import { Button, Divider } from "@material-ui/core";
 import axios from "axios";
 import { Notification } from "@prisma/client";
 import { Skeleton } from "@material-ui/lab";
+import { NotificationsNone } from "@material-ui/icons";
 
 const Notifications = () => {
   let data = useUser({ redirectTo: "/login" });
@@ -37,6 +38,11 @@ const Notifications = () => {
           <Skeleton style={{ height: 50 }} />
           <Skeleton style={{ height: 50 }} />
         </div>
+      )}
+      {!isLoadingNotfications && notifications.length === 0 && (
+        <p style={{ margin: 0, padding: 0, color: "rgb(204 204 204)" }}>
+          No notifications
+        </p>
       )}
       {notifications.map((notification) => {
         return (

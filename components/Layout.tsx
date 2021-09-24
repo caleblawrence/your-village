@@ -51,7 +51,7 @@ const Layout = ({ children }) => {
     focusThrottleInterval: 10000,
     dedupingInterval: 10000,
   });
-  let numUnreadNotifications = undefined;
+  let numUnreadNotifications = 0;
   if (data && data.notifications) {
     numUnreadNotifications = data.notifications.filter(
       (notification) => notification.read === false
@@ -203,7 +203,9 @@ const Layout = ({ children }) => {
                         onClick={async (e) => {
                           e.preventDefault();
                           await mutateUser(fetchJson("/api/logout"));
-                          router.push("/login");
+                          setTimeout(function () {
+                            router.push("/login");
+                          }, 2000);
                         }}
                       >
                         Logout
