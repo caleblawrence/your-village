@@ -13,6 +13,9 @@ export default withSession(async (req, res, session) => {
     where: {
       userId: +userId,
     },
+    orderBy: {
+      createdAt: "desc",
+    },
   });
 
   await prisma.notification.updateMany({

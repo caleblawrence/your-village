@@ -6,7 +6,7 @@ import { Button, Divider } from "@material-ui/core";
 import axios from "axios";
 import { Notification } from "@prisma/client";
 import { Skeleton } from "@material-ui/lab";
-import { NotificationsNone } from "@material-ui/icons";
+import { format } from "date-fns";
 
 const Notifications = () => {
   let data = useUser({ redirectTo: "/login" });
@@ -54,7 +54,19 @@ const Notifications = () => {
                 padding: 10,
               }}
             >
-              <p style={{ margin: 0, padding: 0 }}>{notification.message}</p>
+              <p style={{ margin: 0, padding: 0, fontSize: 18 }}>
+                {notification.message}
+              </p>
+              <p
+                style={{
+                  margin: 0,
+                  padding: 0,
+                  marginTop: 5,
+                  color: "#c7c7c7",
+                }}
+              >
+                {format(new Date(notification.createdAt), "LLL do h:mmaaa")}
+              </p>
               <Button color="primary" href={notification.link}>
                 View
               </Button>
