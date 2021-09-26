@@ -5,5 +5,6 @@ export default withSession(async (req, res, session) => {
   await req.session.save();
 
   req.session.destroy();
+  res.setHeader("cache-control", "no-store, max-age=0");
   return res.status(200).json({ message: "Logged out" });
 });
